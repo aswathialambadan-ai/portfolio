@@ -1,803 +1,1222 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import apiClient, { getMediaUrl } from "../utils/apiClient";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
+import profileImage from "../images/profile.png";
 
 const Home = () => {
   const [about, setAbout] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [, setSkills] = useState([]);
   const [experiences, setExperiences] = useState([]);
-  const [resume, setResume] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  const rolesList = [
+    "SENIOR FRONTEND ENGINEER",
+    "REACT & TYPESCRIPT ARCHITECT",
+    "DESIGN SYSTEM SPECIALIST",
+    "PERFORMANCE & UI ENGINEER",
+  ];
+
+  // Dynamic Text Morphing Loop
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % rolesList.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [rolesList.length]);
+
+  const defaultAbout = {
+    full_name: "ASWATHI",
+    professional_title: "SENIOR FRONTEND ENGINEER (4+ YEARS EXP)",
+    short_intro:
+      "Senior Frontend Engineer with 4+ years of experience architecting high-performance React applications, resilient design systems, and responsive enterprise interfaces.",
+    description:
+      "With 4+ years of hands-on frontend engineering experience, I specialize in building modular, accessible, and fast web applications. My focus spans scalable component libraries, state management pipelines, REST API integration, and Web Vitals performance optimization.",
+  };
+
+  const defaultSkillCategories = [
+    {
+      title: "Frontend Architecture & Frameworks",
+      icon: "⚛️",
+      description: "Building scalable single-page apps, reusable design tokens, and modular UI architectures.",
+      skills: [
+        { name: "React 18", level: "Expert" },
+        { name: "TypeScript", level: "Advanced" },
+        { name: "JavaScript ES6+", level: "Expert" },
+        { name: "Next.js", level: "Advanced" },
+        { name: "HTML5 / CSS3", level: "Expert" },
+      ],
+    },
+    {
+      title: "State Management & Data Flow",
+      icon: "⚡",
+      description: "Managing complex asynchronous state, client caching, and API integration pipelines.",
+      skills: [
+        { name: "Redux Toolkit", level: "Expert" },
+        { name: "React Query (TanStack)", level: "Advanced" },
+        { name: "RESTful APIs", level: "Expert" },
+        { name: "Context API", level: "Expert" },
+        { name: "Axios / GraphQL", level: "Proficient" },
+      ],
+    },
+    {
+      title: "UI Engineering & Design Systems",
+      icon: "🎨",
+      description: "Crafting responsive layouts, micro-animations, and accessible WCAG-compliant primitives.",
+      skills: [
+        { name: "Tailwind CSS", level: "Expert" },
+        { name: "Material UI (MUI)", level: "Advanced" },
+        { name: "Framer Motion", level: "Advanced" },
+        { name: "CSS Modules / Sass", level: "Expert" },
+        { name: "Design Tokens", level: "Advanced" },
+      ],
+    },
+    {
+      title: "Build Tools & Quality Assurance",
+      icon: "🛠️",
+      description: "Optimizing Web Vitals metrics, automated linting, bundling, and version control workflows.",
+      skills: [
+        { name: "Git & GitHub Workflows", level: "Expert" },
+        { name: "Vite / Webpack", level: "Advanced" },
+        { name: "Lighthouse Performance", level: "Advanced" },
+        { name: "Jest / Testing Library", level: "Proficient" },
+        { name: "Figma to Code", level: "Expert" },
+      ],
+    },
+    {
+      title: "Backend & Database Integration",
+      icon: "🔌",
+      description: "Collaborating seamlessly across full-stack architectures and database schemas.",
+      skills: [
+        { name: "Laravel Framework", level: "Advanced" },
+        { name: "MySQL Relational DB", level: "Advanced" },
+        { name: "Node.js / Express", level: "Proficient" },
+        { name: "REST API Design", level: "Advanced" },
+      ],
+    },
+  ];
+
+  const defaultProjects = [
+    {
+      id: 1,
+      title: "DevPulse Studio & Architecture Suite",
+      slug: "devpulse-studio",
+      description:
+        "Enterprise developer portfolio studio and analytics platform featuring live component previewing, dynamic theme customizer, real-time metrics dashboards, and API integration.",
+      featured: true,
+      category: "Fullstack",
+      technologies: ["React 18", "TypeScript", "Tailwind CSS", "Laravel", "MySQL"],
+      metrics: "350ms FCP • 99/100 Lighthouse • 100% Type Safe",
+      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1000&auto=format&fit=crop&q=80",
+      github_url: "https://github.com",
+      live_url: "https://example.com",
+    },
+    {
+      id: 2,
+      title: "SaaS Enterprise Analytics Workspace",
+      slug: "saas-analytics",
+      description:
+        "High-density cloud analytics monitoring dashboard with interactive charting widgets, drag-and-drop workspace layout, multi-tenant workspace switcher, and dark/light modes.",
+      featured: false,
+      category: "Frontend",
+      technologies: ["React", "MUI", "TypeScript", "Chart.js", "Framer Motion"],
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
+      github_url: "https://github.com",
+      live_url: "https://example.com",
+    },
+    {
+      id: 3,
+      title: "High-Speed E-Commerce Platform",
+      slug: "ecommerce-storefront",
+      description:
+        "Sub-second e-commerce shopping experience with real-time product search filters, cart state management, checkout integrations, and WCAG AA accessibility compliance.",
+      featured: false,
+      category: "Frontend",
+      technologies: ["React", "Tailwind CSS", "JavaScript ES6+", "REST API"],
+      image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=80",
+      github_url: "https://github.com",
+      live_url: "https://example.com",
+    },
+    {
+      id: 4,
+      title: "Real-Time Kanban Task Collaboration",
+      slug: "task-workspace",
+      description:
+        "Team productivity workspace with interactive drag-and-drop workflow boards, activity feeds, instant priority filters, and Laravel REST backend data sync.",
+      featured: false,
+      category: "Fullstack",
+      technologies: ["React", "Laravel", "MySQL", "Tailwind CSS"],
+      image: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&auto=format&fit=crop&q=80",
+      github_url: "https://github.com",
+      live_url: "https://example.com",
+    },
+  ];
+
+  const defaultExperiences = [
+    {
+      id: 1,
+      role: "Senior Frontend Engineer",
+      company: "InnovateTech Solutions",
+      period: "2023 - PRESENT • 2+ YRS",
+      location: "Remote",
+      description:
+        "Lead frontend architecture for enterprise SaaS web applications using React, TypeScript, and Tailwind CSS. Reduced initial bundle size by 38%, established core design system tokens, and spearheaded Web Vitals optimization.",
+      techStack: ["React 18", "TypeScript", "Tailwind CSS", "Redux Toolkit", "Vite", "Figma"],
+    },
+    {
+      id: 2,
+      role: "Frontend Engineer / Web Specialist",
+      company: "Digital Dynamics Studio",
+      period: "2021 - 2023 • 2 YRS",
+      location: "Hybrid",
+      description:
+        "Architected custom React web tools and integrated RESTful APIs with Laravel/MySQL backend. Optimized page loading performance by 45% and delivered 15+ client web applications.",
+      techStack: ["JavaScript ES6+", "React", "REST APIs", "Laravel", "MySQL", "MUI"],
+    },
+    {
+      id: 3,
+      role: "Junior Web Developer",
+      company: "Tech Craft Solutions",
+      period: "2020 - 2021 • 1 YR",
+      location: "On-site",
+      description:
+        "Engineered responsive HTML5/CSS3 web components, refactored legacy JavaScript codebases into modern ES modules, and implemented automated cross-browser testing workflows.",
+      techStack: ["JavaScript", "HTML5", "CSS3 / Sass", "Git", "Webpack"],
+    },
+  ];
 
   useEffect(() => {
     fetchHomeData();
   }, []);
 
   const fetchHomeData = async () => {
-    setLoading(true);
     try {
-      const [aboutRes, projRes, skillsRes, expRes, resumeRes] =
-        await Promise.allSettled([
-          apiClient.get("/api/about"),
-          apiClient.get("/api/projects"),
-          apiClient.get("/api/skills"),
-          apiClient.get("/api/experience"),
-          apiClient.get("/api/resume"),
-        ]);
+      const [aboutRes, projRes, skillsRes, expRes] = await Promise.allSettled([
+        apiClient.get("/api/about"),
+        apiClient.get("/api/projects"),
+        apiClient.get("/api/skills"),
+        apiClient.get("/api/experience"),
+      ]);
 
       if (aboutRes.status === "fulfilled" && aboutRes.value.data) {
         const d = aboutRes.value.data;
-        const aboutObj = d.data
-          ? Array.isArray(d.data)
-            ? d.data[0]
-            : d.data
-          : Array.isArray(d)
-          ? d[0]
-          : d;
-        setAbout(aboutObj);
+        const aboutObj = d.data ? (Array.isArray(d.data) ? d.data[0] : d.data) : (Array.isArray(d) ? d[0] : d);
+        if (aboutObj) setAbout(aboutObj);
       }
 
       if (projRes.status === "fulfilled" && projRes.value.data) {
         const d = projRes.value.data;
-        setProjects(d.data || (Array.isArray(d) ? d : []));
+        const list = d.data || (Array.isArray(d) ? d : []);
+        if (list.length > 0) setProjects(list);
       }
 
       if (skillsRes.status === "fulfilled" && skillsRes.value.data) {
         const d = skillsRes.value.data;
-        setSkills(d.data || (Array.isArray(d) ? d : []));
+        const list = d.data || (Array.isArray(d) ? d : []);
+        if (list.length > 0) setSkills(list);
       }
 
       if (expRes.status === "fulfilled" && expRes.value.data) {
         const d = expRes.value.data;
-        setExperiences(d.data || (Array.isArray(d) ? d : []));
-      }
-
-      if (resumeRes.status === "fulfilled" && resumeRes.value.data) {
-        const d = resumeRes.value.data;
-        setResume(d.data || d);
+        const list = d.data || (Array.isArray(d) ? d : []);
+        if (list.length > 0) setExperiences(list);
       }
     } catch (err) {
       console.error("Home data fetch error:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const displayName = about?.full_name || "Adila Farhana";
-  const displayTitle = about?.professional_title || "Full-Stack Developer";
-  const displayIntro =
-    about?.short_intro ||
-    about?.description ||
-    "Full Stack Developer specializing in responsive frontend architectures, robust backend APIs, and modern web applications.";
-  const displayAvatar = about?.profile_image
-    ? getMediaUrl(about.profile_image)
-    : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
+  const currentAbout = about || defaultAbout;
+  const currentProjects = projects.length > 0 ? projects : defaultProjects;
+  const currentExperiences = experiences.length > 0 ? experiences : defaultExperiences;
 
-  const featuredProjects = projects.slice(0, 3);
-  const topSkills = skills.slice(0, 8);
+  const displayName = (currentAbout.full_name || "ASWATHI").toUpperCase();
+  const displayIntro = currentAbout.short_intro || defaultAbout.short_intro;
 
-  const getSlug = (project) => {
-    if (!project) return "project";
-    return (
-      project.title
-        ?.toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "") || project.id
-    );
+  const featuredProject = currentProjects.find((p) => p.featured) || currentProjects[0];
+  const regularProjects = currentProjects.filter((p) => p.id !== featuredProject?.id);
+
+  const copyEmailToClipboard = () => {
+    navigator.clipboard.writeText("aswathi.dev@example.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 3000);
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+    setTimeout(() => setFormSubmitted(false), 5000);
   };
 
   return (
-    <div className="portix-home-view">
+    <div className="aswathi-experimental-root bg-grid-pattern">
+      {/* Film Grain Texture Overlay */}
+      <div className="bg-noise-overlay"></div>
+
       <style>{`
-        .portix-home-view {
+        .aswathi-experimental-root {
           min-height: 100vh;
-          background: var(--bg-primary);
+          background-color: var(--bg-primary);
           color: var(--text-light);
           font-family: var(--font-main);
           position: relative;
           overflow-x: hidden;
         }
 
-        /* Top Loading Line */
-        .top-loading-bar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, #ff5722, #f59e0b);
-          z-index: 9999;
-        }
-
-        /* Ambient Glow behind Hero Disc */
-        .hero-ambient-disc {
-          position: absolute;
-          top: 80px;
-          right: 15%;
-          width: 480px;
-          height: 480px;
-          background: radial-gradient(circle, rgba(234, 88, 12, 0.35) 0%, rgba(234, 88, 12, 0.05) 60%, transparent 80%);
-          filter: blur(40px);
-          pointer-events: none;
-          z-index: 0;
-          border-radius: 50%;
-        }
-
-        .home-main-container {
-          max-width: 1300px;
-          margin: 0 auto;
-          padding: 40px 40px 80px 40px;
+        .experimental-hero-wrapper {
           position: relative;
-          z-index: 1;
+          min-height: 85vh;
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 48px 40px 80px 40px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
         }
 
         @media (max-width: 768px) {
-          .home-main-container {
-            padding: 24px 20px;
+          .experimental-hero-wrapper {
+            padding: 32px 20px 60px 20px;
+            min-height: auto;
           }
         }
 
-        /* HERO SECTION */
-        .hero-portix-layout {
+        .hero-telemetry-bar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 40px;
-          min-height: 600px;
-          position: relative;
-          margin-bottom: 60px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid var(--border-subtle);
+          margin-bottom: 40px;
+          flex-wrap: wrap;
+          gap: 16px;
         }
 
-        @media (max-width: 1024px) {
-          .hero-portix-layout {
-            flex-direction: column-reverse;
-            text-align: center;
-            min-height: auto;
-            gap: 32px;
+        .hero-main-asymmetric {
+          display: grid;
+          grid-template-columns: 1.25fr 0.95fr;
+          gap: 48px;
+          align-items: center;
+          position: relative;
+          z-index: 5;
+        }
+
+        @media (max-width: 992px) {
+          .hero-main-asymmetric {
+            grid-template-columns: 1fr;
+            gap: 40px;
           }
         }
 
-        .hero-left-editorial {
-          flex: 1.2;
-          max-width: 680px;
-          z-index: 2;
+        .hero-title-container {
+          position: relative;
         }
 
-        .hero-eyebrow-tag {
+        .hero-exp-badge {
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          padding: 6px 16px;
+          border-radius: 20px;
+          background: rgba(79, 70, 229, 0.1);
+          border: 1px solid rgba(79, 70, 229, 0.25);
+          color: var(--accent-purple);
+          font-family: var(--font-mono);
           font-size: 0.82rem;
-          font-weight: 800;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: var(--accent-orange);
-          margin-bottom: 16px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          margin-bottom: 20px;
         }
 
-        .hero-eyebrow-tag::before {
-          content: '■';
-          font-size: 0.75rem;
-        }
-
-        .hero-editorial-headline {
-          font-size: 4rem;
-          font-weight: 900;
-          line-height: 1.05;
-          letter-spacing: -0.03em;
-          text-transform: uppercase;
-          color: var(--text-pure-white);
+        .hero-role-morph {
+          font-family: var(--font-mono);
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--accent-cyan);
+          letter-spacing: 0.12em;
+          height: 32px;
+          margin-top: 12px;
           margin-bottom: 24px;
-        }
-
-        @media (max-width: 768px) {
-          .hero-editorial-headline {
-            font-size: 2.8rem;
-          }
-        }
-
-        .hero-bio-summary {
-          font-size: 1.1rem;
-          color: var(--text-muted);
-          line-height: 1.7;
-          margin-bottom: 36px;
-          max-width: 540px;
-        }
-
-        @media (max-width: 1024px) {
-          .hero-bio-summary {
-            margin: 0 auto 32px auto;
-          }
-        }
-
-        .hero-action-buttons {
           display: flex;
           align-items: center;
-          gap: 20px;
-          flex-wrap: wrap;
         }
 
-        @media (max-width: 1024px) {
-          .hero-action-buttons {
-            justify-content: center;
-          }
-        }
-
-        .btn-inkyy-orange {
-          background: var(--accent-orange);
-          color: #ffffff;
-          font-weight: 800;
-          font-size: 0.92rem;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          padding: 16px 36px;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          transition: all 0.3s ease;
-          box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
-        }
-
-        .btn-inkyy-orange:hover {
-          background: var(--accent-orange-hover);
-          transform: translateY(-3px);
-          box-shadow: 0 14px 35px rgba(234, 88, 12, 0.6);
-        }
-
-        .btn-inkyy-outline {
-          background: transparent;
+        /* Non-Circular Professional Portrait Card */
+        .hero-portrait-frame {
+          position: relative;
+          width: 100%;
+          max-width: 440px;
+          margin: 0 auto;
+          border-radius: 20px;
+          background: var(--bg-card);
           border: 1px solid var(--border-light);
-          color: var(--text-pure-white);
-          font-weight: 800;
-          font-size: 0.92rem;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          padding: 16px 36px;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          transition: all 0.3s ease;
+          box-shadow: var(--shadow-lg);
+          padding: 16px;
+          overflow: hidden;
+          transition: all 0.35s ease;
         }
 
-        .btn-inkyy-outline:hover {
-          border-color: var(--text-pure-white);
-          background: rgba(255, 255, 255, 0.08);
-          transform: translateY(-3px);
+        .hero-portrait-frame:hover {
+          border-color: var(--accent-purple);
+          box-shadow: 0 25px 60px -10px rgba(79, 70, 229, 0.2);
+          transform: translateY(-4px);
         }
 
-        /* Hero Right Portrait Frame */
-        .hero-right-portrait {
-          flex: 0.9;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        .portrait-img-wrapper {
           position: relative;
-          z-index: 1;
-        }
-
-        .hero-disc-circle {
-          position: absolute;
-          width: 380px;
-          height: 380px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #ea580c 0%, #7c2d12 60%, transparent 100%);
-          z-index: -1;
-          box-shadow: 0 0 80px rgba(234, 88, 12, 0.3);
-        }
-
-        @media (max-width: 768px) {
-          .hero-disc-circle {
-            width: 280px;
-            height: 280px;
-          }
-        }
-
-        .hero-portrait-img-wrap {
-          width: 360px;
+          width: 100%;
           height: 420px;
-          position: relative;
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
+          border-radius: 12px;
+          overflow: hidden;
+          background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
         }
 
-        @media (max-width: 768px) {
-          .hero-portrait-img-wrap {
-            width: 260px;
-            height: 320px;
-          }
+        [data-theme="dark"] .portrait-img-wrapper {
+          background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
         }
 
-        .hero-portrait-element {
+        .portrait-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          border-radius: 20px;
-          box-shadow: var(--shadow-lg);
-          border: 1px solid var(--border-light);
+          object-position: center top;
         }
 
-        /* Floating Stamp Button */
-        .hero-stamp-badge {
+        .portrait-badge-overlay {
           position: absolute;
-          bottom: -20px;
-          left: -20px;
-          width: 100px;
-          height: 100px;
-          background: var(--accent-orange);
-          border-radius: 50%;
+          bottom: 16px;
+          left: 16px;
+          right: 16px;
+          background: rgba(15, 23, 42, 0.88);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
+          padding: 14px 18px;
+          color: #ffffff;
+        }
+
+        [data-theme="light"] .portrait-badge-overlay {
+          background: rgba(255, 255, 255, 0.94);
+          border: 1px solid rgba(15, 23, 42, 0.12);
+          color: #0f172a;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero-bottom-actions {
+          margin-top: 48px;
           display: flex;
           align-items: center;
-          justify-content: center;
-          text-align: center;
-          color: #ffffff;
-          font-weight: 900;
-          font-size: 0.72rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          box-shadow: 0 10px 25px rgba(234, 88, 12, 0.5);
+          justify-content: space-between;
+          padding-top: 28px;
+          border-top: 1px solid var(--border-subtle);
+          flex-wrap: wrap;
+          gap: 24px;
+        }
+
+        .action-button-group {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+
+        .scroll-trigger-indicator {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: var(--font-mono);
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: var(--text-dim);
+          letter-spacing: 0.1em;
           text-decoration: none;
-          line-height: 1.2;
-          transition: transform 0.3s ease;
-          border: 2px solid var(--bg-primary);
+          transition: color 0.25s ease;
         }
 
-        .hero-stamp-badge:hover {
-          transform: scale(1.1) rotate(6deg);
-          background: var(--accent-orange-hover);
+        .scroll-trigger-indicator:hover {
+          color: var(--accent-purple);
         }
 
-        /* STATS COUNTER STRIP */
-        .inkyy-stats-strip {
+        /* Telemetry Stats Cards */
+        .stats-telemetry-row {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: 20px;
-          margin-bottom: 90px;
-          margin-top: 40px;
+          margin-top: 48px;
         }
 
-        @media (max-width: 860px) {
-          .inkyy-stats-strip {
+        @media (max-width: 992px) {
+          .stats-telemetry-row {
             grid-template-columns: repeat(2, 1fr);
           }
         }
 
-        .stat-block-card {
-          background: var(--bg-surface);
+        @media (max-width: 520px) {
+          .stats-telemetry-row {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .telemetry-stat-card {
+          background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          border-radius: 16px;
-          padding: 24px;
-          text-align: center;
-          box-shadow: var(--shadow-sm);
+          border-radius: 12px;
+          padding: 24px 20px;
+          position: relative;
           transition: all 0.3s ease;
         }
 
-        .stat-block-card:hover {
-          border-color: var(--accent-orange);
-          transform: translateY(-4px);
+        .telemetry-stat-card:hover {
+          border-color: var(--border-glow);
+          transform: translateY(-2px);
         }
 
-        .stat-large-number {
-          font-size: 2.4rem;
-          font-weight: 900;
-          color: var(--text-pure-white);
-          margin-bottom: 4px;
-          letter-spacing: -0.02em;
+        /* SECTIONS GENERAL */
+        .section-container {
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 90px 40px;
+          position: relative;
+          z-index: 2;
         }
 
-        .stat-label-text {
-          font-size: 0.85rem;
-          color: var(--text-muted);
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
+        @media (max-width: 768px) {
+          .section-container {
+            padding: 60px 20px;
+          }
         }
 
-        /* SECTION STYLING */
-        .section-header-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          margin-bottom: 40px;
-          margin-top: 80px;
-          padding-bottom: 16px;
-          border-bottom: 1px solid var(--border-subtle);
+        .section-header {
+          margin-bottom: 56px;
         }
 
-        .section-tag-upper {
-          font-size: 0.8rem;
-          font-weight: 800;
-          color: var(--accent-orange);
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          margin-bottom: 6px;
-        }
-
-        .section-title-bold {
-          font-size: 2.4rem;
-          font-weight: 900;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
-          color: var(--text-pure-white);
-        }
-
-        .link-view-more {
-          color: var(--text-pure-white);
-          text-decoration: none;
-          font-size: 0.88rem;
-          font-weight: 800;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: color 0.2s ease;
-        }
-
-        .link-view-more:hover {
-          color: var(--accent-orange);
-        }
-
-        /* Projects Grid */
-        .portix-projects-grid {
+        /* Grouped Category Skills Grid */
+        .category-skills-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-          gap: 32px;
+          grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+          gap: 28px;
         }
 
-        .portix-project-card {
-          background: var(--bg-surface);
+        @media (max-width: 520px) {
+          .category-skills-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .category-skill-card {
+          background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          border-radius: 20px;
-          overflow: hidden;
-          text-decoration: none;
-          color: inherit;
-          box-shadow: var(--shadow-sm);
+          border-radius: 16px;
+          padding: 32px;
           transition: all 0.3s ease;
           display: flex;
           flex-direction: column;
         }
 
-        .portix-project-card:hover {
-          transform: translateY(-6px);
-          border-color: var(--border-light);
+        .category-skill-card:hover {
+          border-color: var(--border-glow);
+          transform: translateY(-4px);
           box-shadow: var(--shadow-lg);
         }
 
-        .portix-project-img {
-          width: 100%;
-          height: 220px;
-          object-fit: cover;
-          background: var(--bg-surface-elevated);
-          transition: transform 0.4s ease;
+        .skill-item-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 0;
+          border-bottom: 1px dashed var(--border-subtle);
         }
 
-        .portix-project-card:hover .portix-project-img {
+        .skill-item-row:last-child {
+          border-bottom: none;
+        }
+
+        .skill-level-badge {
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 2px 10px;
+          border-radius: 12px;
+          background: rgba(79, 70, 229, 0.08);
+          color: var(--accent-purple);
+          border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        /* Projects Layout */
+        .featured-project-card {
+          background: var(--bg-card);
+          border: 1px solid var(--border-glow);
+          border-radius: 18px;
+          overflow: hidden;
+          display: grid;
+          grid-template-columns: 1.25fr 1fr;
+          gap: 0;
+          margin-bottom: 48px;
+          box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 992px) {
+          .featured-project-card {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .featured-img-wrap {
+          height: 100%;
+          min-height: 380px;
+          overflow: hidden;
+        }
+
+        .featured-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .featured-project-card:hover .featured-img {
           transform: scale(1.04);
         }
 
-        .portix-project-body {
-          padding: 26px;
-          flex: 1;
+        .featured-content {
+          padding: 44px;
           display: flex;
           flex-direction: column;
+          justify-content: center;
         }
 
-        .portix-project-title {
-          font-size: 1.3rem;
-          font-weight: 800;
-          margin-bottom: 10px;
-          color: var(--text-pure-white);
+        .projects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+          gap: 32px;
         }
 
-        .portix-project-desc {
-          font-size: 0.92rem;
-          color: var(--text-muted);
-          line-height: 1.6;
-          margin-bottom: 20px;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
+        .project-card {
+          background: var(--bg-card);
+          border: 1px solid var(--border-subtle);
+          border-radius: 16px;
           overflow: hidden;
-        }
-
-        .portix-project-footer {
-          margin-top: auto;
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.85rem;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: var(--accent-orange);
-        }
-
-        /* Skills Chips */
-        .portix-skills-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 14px;
-        }
-
-        .portix-skill-badge {
-          background: var(--bg-surface);
-          border: 1px solid var(--border-subtle);
-          padding: 14px 24px;
-          border-radius: 12px;
-          color: var(--text-pure-white);
-          font-weight: 800;
-          font-size: 0.95rem;
-          letter-spacing: 0.04em;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          box-shadow: var(--shadow-sm);
-          transition: all 0.25s ease;
-        }
-
-        .portix-skill-badge:hover {
-          border-color: var(--accent-orange);
-          transform: translateY(-2px);
-          color: var(--accent-orange);
-        }
-
-        /* Experience Timeline */
-        .portix-exp-card {
-          background: var(--bg-surface);
-          border: 1px solid var(--border-subtle);
-          border-radius: 20px;
-          padding: 28px;
-          margin-bottom: 20px;
-          box-shadow: var(--shadow-sm);
+          flex-direction: column;
           transition: all 0.3s ease;
         }
 
-        .portix-exp-card:hover {
-          border-color: var(--border-light);
+        .project-card:hover {
+          border-color: var(--border-glow);
+          transform: translateY(-6px);
+          box-shadow: var(--shadow-lg);
         }
 
-        /* CTA Banner */
-        .portix-cta-banner {
-          background: var(--bg-surface);
-          border: 1px solid var(--border-light);
-          border-radius: 28px;
-          padding: 56px 48px;
+        .project-thumb-wrap {
+          height: 220px;
+          overflow: hidden;
+        }
+
+        .project-thumb {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-thumb {
+          transform: scale(1.06);
+        }
+
+        .project-card-body {
+          padding: 28px;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 90px;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+
+        /* Timeline Layout */
+        .timeline-wrapper {
+          position: relative;
+          max-width: 920px;
+          margin: 0 auto;
+        }
+
+        .timeline-line {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 20px;
+          width: 2px;
+          background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan), transparent);
+        }
+
+        @media (min-width: 768px) {
+          .timeline-line {
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        }
+
+        .timeline-item {
+          position: relative;
+          margin-bottom: 48px;
+        }
+
+        .timeline-node {
+          position: absolute;
+          top: 24px;
+          left: 12px;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: var(--accent-purple);
+          border: 4px solid var(--bg-primary);
+          box-shadow: 0 0 12px var(--accent-purple);
+          z-index: 3;
+        }
+
+        @media (min-width: 768px) {
+          .timeline-node {
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        }
+
+        .timeline-card-wrap {
+          margin-left: 56px;
+        }
+
+        @media (min-width: 768px) {
+          .timeline-item:nth-child(even) .timeline-card-wrap {
+            margin-left: 0;
+            margin-right: 50%;
+            padding-right: 40px;
+          }
+          .timeline-item:nth-child(odd) .timeline-card-wrap {
+            margin-left: 50%;
+            padding-left: 40px;
+          }
+        }
+
+        .timeline-card {
+          background: var(--bg-card);
+          border: 1px solid var(--border-subtle);
+          border-radius: 16px;
+          padding: 32px;
+          transition: all 0.3s ease;
+        }
+
+        .timeline-card:hover {
+          border-color: var(--border-glow);
+        }
+
+        /* Contact Section */
+        .contact-cta-card {
+          background: var(--bg-card);
+          border: 1px solid var(--border-glow);
+          border-radius: 24px;
+          padding: 64px 48px;
+          text-align: center;
           box-shadow: var(--shadow-lg);
-          flex-wrap: wrap;
-          gap: 32px;
+        }
+
+        @media (max-width: 768px) {
+          .contact-cta-card {
+            padding: 40px 20px;
+          }
+        }
+
+        .quick-form {
+          max-width: 560px;
+          margin: 40px auto 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 16px 20px;
+          border-radius: 10px;
+          background: var(--input-bg);
+          border: 1px solid var(--input-border);
+          color: var(--text-pure-white);
+          font-family: var(--font-main);
+          font-size: 0.95rem;
+          outline: none;
+          transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .form-input:focus {
+          border-color: var(--accent-purple);
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
       `}</style>
 
-      {loading && <div className="top-loading-bar" />}
-      <div className="hero-ambient-disc" />
-
-      {/* Global Navbar */}
       <PublicNavbar />
 
-      <main className="home-main-container">
-        {/* 1. HERO SECTION */}
-        <section className="hero-portix-layout">
-          <div className="hero-left-editorial">
-            <div className="hero-eyebrow-tag">
-              <span>{displayTitle}</span>
+      <main>
+        {/* =========================================================================
+            1. HERO SECTION (Experienced, Confident & Technical)
+            ========================================================================= */}
+        <section id="hero" className="experimental-hero-wrapper">
+          {/* Telemetry Status Header Bar */}
+          <div className="hero-telemetry-bar">
+            <div className="telemetry-tag">
+              <span className="telemetry-dot"></span>
+              <span>SENIOR FRONTEND PORTFOLIO // 2026</span>
             </div>
-
-            <h1 className="hero-editorial-headline">
-              <span>DESIGN</span> <span className="text-outline">THAT</span><br />
-              <span>CONVERTS VISITORS</span><br />
-              <span className="text-outline">INTO USERS</span>
-            </h1>
-
-            <p className="hero-bio-summary">{displayIntro}</p>
-
-            <div className="hero-action-buttons">
-              {resume ? (
-                <a
-                  href={getMediaUrl(resume.file_path)}
-                  download
-                  className="btn-inkyy-orange"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span>Download CV</span>
-                  <span>📥</span>
-                </a>
-              ) : (
-                <Link to="/contact" className="btn-inkyy-orange">
-                  <span>Get In Touch</span>
-                  <span>➔</span>
-                </Link>
-              )}
-
-              <Link to="/projects" className="btn-inkyy-outline">
-                <span>My Works</span>
-              </Link>
+            <div className="telemetry-tag" style={{ display: window.innerWidth < 640 ? "none" : "flex" }}>
+              <span>LOCATION: HYBRID / REMOTE</span>
+            </div>
+            <div className="telemetry-tag">
+              <span style={{ color: "var(--accent-cyan)" }}>[ OPEN FOR SENIOR ROLES & CONSULTING ]</span>
             </div>
           </div>
 
-          <div className="hero-right-portrait">
-            <div className="hero-disc-circle" />
+          {/* Asymmetric Hero Main Layout */}
+          <div className="hero-main-asymmetric">
+            <motion.div
+              className="hero-title-container"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="hero-exp-badge">
+                <span>✦ 4+ YEARS ENGINEERING EXPERIENCE</span>
+              </div>
 
-            <div className="hero-portrait-img-wrap">
-              <img
-                src={displayAvatar}
-                alt={displayName}
-                className="hero-portrait-element"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
-                }}
-              />
+              {/* Main Display Typography */}
+              <h1 className="editorial-giant-title">
+                {displayName}
+                <br />
+                <span className="editorial-stroke-text">FRONTEND</span>
+              </h1>
 
-              <Link to="/contact" className="hero-stamp-badge">
-                <span>Hire Me<br />Now</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 2. STATS COUNTER STRIP */}
-        <section className="inkyy-stats-strip">
-          <div className="stat-block-card">
-            <div className="stat-large-number">{about?.years_experience || "1+"}</div>
-            <div className="stat-label-text">Experience</div>
-          </div>
-          <div className="stat-block-card">
-            <div className="stat-large-number">{projects.length || "3"}+</div>
-            <div className="stat-label-text">Projects Built</div>
-          </div>
-          <div className="stat-block-card">
-            <div className="stat-large-number">{skills.length || "8"}+</div>
-            <div className="stat-label-text">Core Technologies</div>
-          </div>
-          <div className="stat-block-card">
-            <div className="stat-large-number" style={{ color: "var(--accent-orange)" }}>100%</div>
-            <div className="stat-label-text">Available Now</div>
-          </div>
-        </section>
-
-        {/* 3. FEATURED WORKS SHOWCASE */}
-        <section>
-          <div className="section-header-row">
-            <div>
-              <div className="section-tag-upper">Portfolio</div>
-              <h2 className="section-title-bold">Selected Works</h2>
-            </div>
-            <Link to="/projects" className="link-view-more">
-              <span>View All Works</span>
-              <span>➔</span>
-            </Link>
-          </div>
-
-          <div className="portix-projects-grid">
-            {featuredProjects.map((project) => (
-              <Link
-                to={`/projects/${getSlug(project)}`}
-                key={project.id}
-                className="portix-project-card"
-              >
-                {project.project_image ? (
-                  <img
-                    src={getMediaUrl(project.project_image)}
-                    alt={project.title}
-                    className="portix-project-img"
-                  />
-                ) : (
-                  <div
-                    style={{
-                      height: "220px",
-                      background: "var(--bg-surface-elevated)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "3rem",
-                    }}
+              {/* Dynamic Text Morphing Role */}
+              <div className="hero-role-morph">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={roleIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    💻
-                  </div>
-                )}
+                    &gt; {rolesList[roleIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
 
-                <div className="portix-project-body">
-                  <h3 className="portix-project-title">{project.title}</h3>
-                  <p className="portix-project-desc">{project.description}</p>
-                  <div className="portix-project-footer">
-                    <span>Explore Case Study</span>
-                    <span>➔</span>
+              {/* High Confidence positioning paragraph */}
+              <p
+                style={{
+                  fontSize: "1.12rem",
+                  color: "var(--text-muted)",
+                  lineHeight: "1.75",
+                  maxWidth: "580px",
+                  marginTop: "16px",
+                }}
+              >
+                {displayIntro}
+              </p>
+
+              {/* Quick Action Badges */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "24px" }}>
+                <span className="tech-pill">React 18</span>
+                <span className="tech-pill">TypeScript</span>
+                <span className="tech-pill">Tailwind CSS</span>
+                <span className="tech-pill">Redux Toolkit</span>
+                <span className="tech-pill">REST & GraphQL</span>
+              </div>
+            </motion.div>
+
+            {/* Non-Circular Professional Portrait Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <div className="hero-portrait-frame">
+                <div className="portrait-img-wrapper">
+                  <img src={profileImage} alt="Aswathi - Senior Frontend Engineer" className="portrait-img" />
+                  <div className="portrait-badge-overlay">
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <span style={{ fontWeight: 800, fontSize: "1.05rem", fontFamily: "var(--font-display)" }}>ASWATHI</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent-purple)", fontWeight: 700 }}>
+                        4+ YRS EXP
+                      </span>
+                    </div>
+                    <p style={{ fontSize: "0.82rem", opacity: 0.85, margin: 0 }}>
+                      Senior Frontend Developer • React & TypeScript Architect
+                    </p>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* 4. TECHNICAL SKILLS SUMMARY */}
-        <section>
-          <div className="section-header-row">
-            <div>
-              <div className="section-tag-upper">Tech Stack</div>
-              <h2 className="section-title-bold">Skills & Tools</h2>
-            </div>
-            <Link to="/skills" className="link-view-more">
-              <span>Explore All Stack</span>
-              <span>➔</span>
-            </Link>
-          </div>
-
-          <div className="portix-skills-grid">
-            {topSkills.map((s) => (
-              <div key={s.id} className="portix-skill-badge">
-                <span style={{ color: "var(--accent-orange)" }}>⚡</span>
-                <span>{s.name}</span>
               </div>
-            ))}
+            </motion.div>
           </div>
-        </section>
 
-        {/* 5. CAREER TIMELINE */}
-        <section>
-          <div className="section-header-row">
-            <div>
-              <div className="section-tag-upper">Experience</div>
-              <h2 className="section-title-bold">Career Journey</h2>
+          {/* Telemetry Stats Grid Row */}
+          <div className="stats-telemetry-row">
+            <div className="telemetry-stat-card">
+              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-purple)" }}>4+</div>
+              <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>Years Experience</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Specialized in Frontend & React</div>
             </div>
-            <Link to="/experience" className="link-view-more">
-              <span>Full Timeline</span>
-              <span>➔</span>
-            </Link>
+
+            <div className="telemetry-stat-card">
+              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-cyan)" }}>30+</div>
+              <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>Projects Shipped</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>SaaS, Dashboards & Design Systems</div>
+            </div>
+
+            <div className="telemetry-stat-card">
+              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--text-pure-white)" }}>99.9%</div>
+              <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>Performance Target</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Optimized Web Vitals & Bundle Sizes</div>
+            </div>
+
+            <div className="telemetry-stat-card">
+              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-orange)" }}>100%</div>
+              <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>Component Reusability</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Type-Safe Modular Architecture</div>
+            </div>
           </div>
 
-          <div>
-            {experiences.slice(0, 2).map((exp) => (
-              <div key={exp.id} className="portix-exp-card">
-                <div style={{ color: "var(--accent-orange)", fontWeight: "800", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>
-                  {exp.start_date} — {exp.is_current_job ? "Current" : exp.end_date || "Present"}
-                </div>
-                <h3 style={{ fontSize: "1.3rem", fontWeight: "900", marginBottom: "4px", color: "var(--text-pure-white)" }}>{exp.position}</h3>
-                <div style={{ color: "var(--text-muted)", fontSize: "0.95rem", fontWeight: "700", marginBottom: "10px" }}>{exp.company}</div>
-                <p style={{ color: "var(--text-dim)", fontSize: "0.92rem", lineHeight: "1.7" }}>{exp.description}</p>
-              </div>
-            ))}
+          {/* Bottom Action Triggers */}
+          <div className="hero-bottom-actions">
+            <div className="action-button-group">
+              <a href="#projects" className="btn-editorial-primary">
+                <span>View Featured Work</span>
+                <span>↓</span>
+              </a>
+              <a href="#contact" className="btn-editorial-outline">
+                <span>Contact Aswathi</span>
+                <span>✉</span>
+              </a>
+              <a href="/resume" className="btn-editorial-outline" style={{ padding: "14px 24px" }}>
+                <span>Resume 📄</span>
+              </a>
+            </div>
+
+            <a href="#about" className="scroll-trigger-indicator">
+              <span>EXPLORE EXPERIENCE</span>
+              <span style={{ animation: "bounce 2s infinite" }}>↓</span>
+            </a>
           </div>
         </section>
 
-        {/* 6. CALL TO ACTION BANNER */}
-        <section className="portix-cta-banner">
-          <div>
-            <div className="section-tag-upper">Collaboration</div>
-            <h2 style={{ fontSize: "2.2rem", fontWeight: "900", textTransform: "uppercase", marginBottom: "8px", color: "var(--text-pure-white)" }}>
-              Have a project in mind?
+        {/* =========================================================================
+            2. MODERN ABOUT SECTION
+            ========================================================================= */}
+        <section id="about" className="section-container">
+          <div className="section-header">
+            <span className="telemetry-tag" style={{ color: "var(--accent-purple)" }}>{"// 02. ENGINEERING PHILOSOPHY"}</span>
+            <h2 className="editorial-giant-title" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", marginTop: "8px" }}>
+              4+ YEARS <span className="editorial-stroke-text">EXPERIENCE</span>
             </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "1.05rem" }}>
-              Let’s build scalable and memorable digital experiences together.
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
+            <div className="glass-card">
+              <h3 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-pure-white)", marginBottom: "16px", fontFamily: "var(--font-display)" }}>
+                Architecting Fast, Reliable & Maintainable Web Applications
+              </h3>
+              <p style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "20px" }}>
+                {currentAbout.description || defaultAbout.description}
+              </p>
+              <p style={{ color: "var(--text-muted)", lineHeight: 1.8 }}>
+                Over the past 4+ years, I have collaborated with product designers and backend engineers to build resilient frontend architectures, standardizing UI design tokens, reducing rendering latency, and ensuring accessibility compliance.
+              </p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div className="glass-card" style={{ padding: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "1.4rem" }}>⚡</span>
+                  <h4 style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--text-pure-white)" }}>Architecture & Performance Optimization</h4>
+                </div>
+                <p style={{ fontSize: "0.92rem", color: "var(--text-muted)", margin: 0 }}>
+                  Mastery of React 18 hooks, code splitting, memoization strategies, and Web Vitals monitoring to achieve sub-second load times.
+                </p>
+              </div>
+
+              <div className="glass-card" style={{ padding: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "1.4rem" }}>🎨</span>
+                  <h4 style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--text-pure-white)" }}>Design Systems & Micro-Interactions</h4>
+                </div>
+                <p style={{ fontSize: "0.92rem", color: "var(--text-muted)", margin: 0 }}>
+                  Building reusable component libraries with Tailwind CSS, MUI, and Framer Motion for cohesive design systems.
+                </p>
+              </div>
+
+              <div className="glass-card" style={{ padding: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "1.4rem" }}>🔌</span>
+                  <h4 style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--text-pure-white)" }}>State Management & API Integration</h4>
+                </div>
+                <p style={{ fontSize: "0.92rem", color: "var(--text-muted)", margin: 0 }}>
+                  Proficient with Redux Toolkit, React Query, and RESTful service integrations for predictable data flow.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            3. PROFESSIONAL EXPERIENCE TIMELINE (4+ Years Positioning)
+            ========================================================================= */}
+        <section id="experience" className="section-container">
+          <div className="section-header">
+            <span className="telemetry-tag" style={{ color: "var(--accent-cyan)" }}>{"// 03. CAREER CHRONOLOGY"}</span>
+            <h2 className="editorial-giant-title" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", marginTop: "8px" }}>
+              PROFESSIONAL <span className="editorial-stroke-text">TIMELINE</span>
+            </h2>
+          </div>
+
+          <div className="timeline-wrapper">
+            <div className="timeline-line"></div>
+
+            {currentExperiences.map((exp, i) => (
+              <motion.div
+                key={exp.id || i}
+                className="timeline-item"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+              >
+                <div className="timeline-node"></div>
+                <div className="timeline-card-wrap">
+                  <div className="timeline-card">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px", marginBottom: "8px" }}>
+                      <h3 style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-pure-white)" }}>{exp.role}</h3>
+                      <span className="skill-level-badge">{exp.period}</span>
+                    </div>
+
+                    <div style={{ color: "var(--accent-purple)", fontFamily: "var(--font-mono)", fontSize: "0.92rem", fontWeight: 700, marginBottom: "12px" }}>
+                      {exp.company} — {exp.location || "Remote"}
+                    </div>
+
+                    <p style={{ fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: "1.7", marginBottom: "20px" }}>
+                      {exp.description}
+                    </p>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                      {(exp.techStack || ["React", "TypeScript", "Tailwind CSS"]).map((tech, idx) => (
+                        <span key={idx} className="tech-pill">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            4. TECHNICAL SKILLS GROUPED BY CATEGORY (No percentage bars!)
+            ========================================================================= */}
+        <section id="skills" className="section-container">
+          <div className="section-header">
+            <span className="telemetry-tag" style={{ color: "var(--accent-purple)" }}>{"// 04. TECHNICAL SKILLS"}</span>
+            <h2 className="editorial-giant-title" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", marginTop: "8px" }}>
+              ENGINEERING <span className="editorial-stroke-text">CAPABILITIES</span>
+            </h2>
+            <p className="section-subtitle">
+              Grouped by functional specialization across frontend architecture, UI design systems, build tooling, and API integrations.
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-            <Link to="/contact" className="btn-inkyy-orange">
-              <span>Let's Talk</span>
-              <span>➔</span>
-            </Link>
-            <Link to="/about" className="btn-inkyy-outline">
-              <span>About Me</span>
-            </Link>
+          <div className="category-skills-grid">
+            {defaultSkillCategories.map((cat, idx) => (
+              <motion.div
+                key={idx}
+                className="category-skill-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+                  <span style={{ fontSize: "1.8rem" }}>{cat.icon}</span>
+                  <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-pure-white)", fontFamily: "var(--font-display)" }}>
+                    {cat.title}
+                  </h3>
+                </div>
+
+                <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "20px" }}>
+                  {cat.description}
+                </p>
+
+                <div style={{ marginTop: "auto" }}>
+                  {cat.skills.map((s, i) => (
+                    <div key={i} className="skill-item-row">
+                      <span style={{ fontWeight: 600, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>{s.name}</span>
+                      <span className="skill-level-badge">{s.level}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            5. HIGH QUALITY FEATURED PROJECT SHOWCASE
+            ========================================================================= */}
+        <section id="projects" className="section-container">
+          <div className="section-header">
+            <span className="telemetry-tag" style={{ color: "var(--accent-cyan)" }}>{"// 05. PORTFOLIO SHOWCASE"}</span>
+            <h2 className="editorial-giant-title" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", marginTop: "8px" }}>
+              FEATURED <span className="editorial-stroke-text">PROJECTS</span>
+            </h2>
+          </div>
+
+          {/* Featured Hero Flagship Project */}
+          {featuredProject && (
+            <motion.div
+              className="featured-project-card"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="featured-img-wrap">
+                <img
+                  src={featuredProject.image ? getMediaUrl(featuredProject.image) : defaultProjects[0].image}
+                  alt={featuredProject.title}
+                  className="featured-img"
+                />
+              </div>
+
+              <div className="featured-content">
+                <span className="telemetry-tag" style={{ color: "var(--accent-purple)", marginBottom: "12px" }}>
+                  ✦ FLAGSHIP FEATURED PROJECT
+                </span>
+                <h3 style={{ fontSize: "2.1rem", fontWeight: 800, color: "var(--text-pure-white)", fontFamily: "var(--font-display)", marginBottom: "16px" }}>
+                  {featuredProject.title}
+                </h3>
+                <p style={{ color: "var(--text-muted)", lineHeight: 1.7, marginBottom: "20px" }}>
+                  {featuredProject.description}
+                </p>
+
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.82rem", color: "var(--accent-cyan)", fontWeight: 700, marginBottom: "24px" }}>
+                  ⚡ {featuredProject.metrics || "350ms FCP • 99/100 Lighthouse • 100% Type Safe"}
+                </div>
+
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "32px" }}>
+                  {(featuredProject.technologies || defaultProjects[0].technologies).map((t, i) => (
+                    <span key={i} className="tech-pill">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: "16px" }}>
+                  <a href={featuredProject.live_url || "#"} target="_blank" rel="noreferrer" className="btn-editorial-primary" style={{ padding: "12px 24px", fontSize: "0.82rem" }}>
+                    <span>Live Demo</span> ↗
+                  </a>
+                  <a href={featuredProject.github_url || "#"} target="_blank" rel="noreferrer" className="btn-editorial-outline" style={{ padding: "12px 24px", fontSize: "0.82rem" }}>
+                    <span>GitHub Code</span> 🐙
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Grid of Secondary Projects */}
+          <div className="projects-grid">
+            {regularProjects.map((proj, idx) => (
+              <motion.div
+                key={proj.id || idx}
+                className="project-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
+                <div className="project-thumb-wrap">
+                  <img
+                    src={proj.image ? getMediaUrl(proj.image) : defaultProjects[1].image}
+                    alt={proj.title}
+                    className="project-thumb"
+                  />
+                </div>
+
+                <div className="project-card-body">
+                  <h3 style={{ fontSize: "1.35rem", fontWeight: 800, color: "var(--text-pure-white)", marginBottom: "12px" }}>{proj.title}</h3>
+                  <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", flexGrow: 1, marginBottom: "20px", lineHeight: 1.6 }}>{proj.description}</p>
+
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "24px" }}>
+                    {(proj.technologies || ["React"]).map((t, i) => (
+                      <span key={i} className="tech-pill" style={{ fontSize: "0.72rem", padding: "2px 8px" }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <a href={proj.live_url || "#"} target="_blank" rel="noreferrer" className="btn-editorial-outline" style={{ padding: "8px 16px", fontSize: "0.78rem" }}>
+                      Live Demo ↗
+                    </a>
+                    <a href={proj.github_url || "#"} target="_blank" rel="noreferrer" className="btn-editorial-outline" style={{ padding: "8px 16px", fontSize: "0.78rem" }}>
+                      Code 🐙
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            6. CONTACT & ACTION SECTION
+            ========================================================================= */}
+        <section id="contact" className="section-container">
+          <div className="contact-cta-card">
+            <span className="telemetry-tag" style={{ color: "var(--accent-purple)", marginBottom: "16px" }}>
+              {"// 06. INITIATE CONNECTION"}
+            </span>
+            <h2 className="editorial-giant-title" style={{ fontSize: "clamp(2.2rem, 5vw, 3.8rem)", marginBottom: "16px" }}>
+              LET'S BUILD SOMETHING<br />
+              <span className="editorial-stroke-text">EXCEPTIONAL TOGETHER.</span>
+            </h2>
+
+            <p style={{ fontSize: "1.05rem", color: "var(--text-muted)", maxWidth: "600px", margin: "0 auto 32px auto" }}>
+              Interested in collaborating, discussing frontend architecture, or hiring a 4+ year experienced engineer? Get in touch directly!
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap", margin: "32px 0" }}>
+              <button onClick={copyEmailToClipboard} className="btn-editorial-outline">
+                <span>✉ aswathi.dev@example.com</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--accent-purple)", fontWeight: 700 }}>
+                  {copiedEmail ? "(Copied to Clipboard!)" : "(Copy Email)"}
+                </span>
+              </button>
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="btn-editorial-outline">
+                <span>🐙 GitHub Profile</span>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="btn-editorial-outline">
+                <span>💼 LinkedIn Profile</span>
+              </a>
+            </div>
+
+            <form className="quick-form" onSubmit={handleContactSubmit}>
+              <input type="text" required placeholder="Your Name / Organization" className="form-input" />
+              <input type="email" required placeholder="Your Email Address" className="form-input" />
+              <textarea required rows="4" placeholder="Your Project Details or Position Inquiry..." className="form-input" style={{ resize: "none" }}></textarea>
+              <button type="submit" className="btn-editorial-primary" style={{ justifyContent: "center" }}>
+                {formSubmitted ? "TRANSMISSION SENT SUCCESSFULLY ✨" : "SEND DIRECT MESSAGE →"}
+              </button>
+            </form>
           </div>
         </section>
       </main>
 
-      {/* Global Footer */}
       <PublicFooter />
     </div>
   );

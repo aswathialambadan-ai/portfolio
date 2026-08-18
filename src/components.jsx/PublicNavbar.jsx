@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import apiClient, { getMediaUrl } from "../utils/apiClient";
+import apiClient from "../utils/apiClient";
 import { useTheme } from "../utils/ThemeContext";
 
 const PublicNavbar = () => {
   const [about, setAbout] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
   useEffect(() => {
     fetchAboutInfo();
+    const handleScroll = () => {
+      if (window.scrollY > 30) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const fetchAboutInfo = async () => {
@@ -23,8 +33,8 @@ const PublicNavbar = () => {
             ? d.data[0]
             : d.data
           : Array.isArray(d)
-          ? d[0]
-          : d;
+            ? d[0]
+            : d;
         setAbout(aboutObj);
       }
     } catch (err) {
@@ -32,295 +42,285 @@ const PublicNavbar = () => {
     }
   };
 
-  const displayName = about?.full_name || "Adila Farhana";
-  const brandName = displayName.split(" ")[0].toUpperCase() || "PORTIX";
-  const displayAvatar = about?.profile_image
-    ? getMediaUrl(about.profile_image)
-    : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
+  const displayName = about?.full_name || "ASWATHI";
+  const brandName = displayName.split(" ")[0].toUpperCase();
 
   const isActive = (path) => {
-    if (path === "/" && location.pathname === "/") return true;
+    if (path === "/" && location.pathname === "/" && !location.hash) return true;
+    if (location.hash && path.includes(location.hash)) return true;
     if (path !== "/" && location.pathname.startsWith(path)) return true;
     return false;
   };
 
+  const scrollToSection = (e, sectionId) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+      setMobileNavOpen(false);
+    }
+  };
+
   return (
-    <header className="portix-navbar-header">
+    <header className={`aswathi-editorial-nav ${scrolled ? "scrolled" : ""}`}>
       <style>{`
-        .portix-navbar-header {
+        .aswathi-editorial-nav {
           position: sticky;
           top: 0;
           z-index: 1000;
           background: var(--nav-bg);
           backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
           border-bottom: 1px solid var(--border-subtle);
           padding: 20px 40px;
           transition: all 0.3s ease;
           font-family: var(--font-main);
         }
 
-        .portix-nav-container {
-          max-width: 1300px;
+        .aswathi-editorial-nav.scrolled {
+          padding: 14px 40px;
+          border-bottom-color: var(--border-glow);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .editorial-nav-container {
+          max-width: 1440px;
           margin: 0 auto;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .portix-brand-logo {
+        .editorial-brand {
           display: flex;
           align-items: center;
           gap: 12px;
           text-decoration: none;
           color: var(--text-pure-white);
-          font-weight: 900;
-          font-size: 1.4rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
+          font-family: var(--font-display);
+          font-weight: 800;
+          font-size: 1.3rem;
+          letter-spacing: 0.05em;
         }
 
-        .portix-brand-badge {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid var(--accent-orange);
-          background: var(--bg-surface-elevated);
+        .editorial-brand-mark {
+          font-family: var(--font-mono);
+          color: var(--accent-violet);
+          font-size: 0.9rem;
         }
 
-        .portix-nav-menu {
+        .editorial-menu {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 36px;
+          list-style: none;
         }
 
-        @media (max-width: 980px) {
-          .portix-nav-menu {
-            display: none;
-          }
-        }
-
-        .portix-nav-link {
-          color: var(--text-muted);
+        .editorial-link {
           text-decoration: none;
-          font-size: 0.85rem;
-          font-weight: 700;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          transition: all 0.2s ease;
-          position: relative;
-          padding: 4px 0;
-        }
-
-        .portix-nav-link:hover,
-        .portix-nav-link.active {
-          color: var(--text-pure-white);
-        }
-
-        .portix-nav-link.active::after {
-          content: '';
-          position: absolute;
-          bottom: -4px;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: var(--accent-orange);
-        }
-
-        .portix-talk-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          background: transparent;
-          border: 1px solid var(--border-light);
-          border-radius: 8px;
-          padding: 4px 16px 4px 4px;
-          color: var(--text-pure-white);
+          color: var(--text-muted);
+          font-family: var(--font-mono);
           font-size: 0.82rem;
-          font-weight: 800;
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        .portix-talk-btn:hover {
-          border-color: var(--accent-orange);
-          background: rgba(249, 115, 22, 0.08);
-          transform: translateY(-2px);
-        }
-
-        .portix-talk-arrow {
-          width: 32px;
-          height: 32px;
-          background: var(--accent-orange);
-          color: #ffffff;
+          transition: color 0.25s ease;
           display: flex;
           align-items: center;
-          justify-content: center;
-          border-radius: 6px;
-          font-weight: 900;
-          transition: transform 0.25s ease;
+          gap: 6px;
         }
 
-        .portix-talk-btn:hover .portix-talk-arrow {
-          transform: translateX(3px);
-          background: var(--accent-orange-hover);
+        .editorial-link-num {
+          color: var(--accent-violet);
+          font-size: 0.72rem;
         }
 
-        .portix-admin-pill {
-          color: var(--text-dim);
-          text-decoration: none;
-          font-size: 0.78rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          padding: 6px 12px;
-          border-radius: 6px;
-          border: 1px dashed var(--border-light);
-          transition: all 0.2s ease;
-        }
-
-        .portix-admin-pill:hover {
+        .editorial-link:hover,
+        .editorial-link.active {
           color: var(--text-pure-white);
-          border-color: var(--accent-orange);
-          background: rgba(249, 115, 22, 0.08);
         }
 
-        .portix-theme-toggle {
-          background: var(--bg-surface-elevated);
-          border: 1px solid var(--border-light);
-          color: var(--text-pure-white);
-          border-radius: 50%;
+        .theme-editorial-toggle {
+          background: transparent;
+          border: 1px solid var(--border-subtle);
+          color: var(--text-light);
           width: 38px;
           height: 38px;
-          cursor: pointer;
+          border-radius: 4px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.05rem;
-          transition: all 0.2s ease;
+          cursor: pointer;
+          font-size: 1rem;
+          transition: all 0.25s ease;
         }
 
-        .portix-theme-toggle:hover {
-          border-color: var(--accent-orange);
-          transform: rotate(15deg);
+        .theme-editorial-toggle:hover {
+          border-color: var(--accent-violet);
+          color: var(--accent-violet);
         }
 
-        .portix-mobile-toggle-btn {
+        .mobile-hamburger-btn {
           display: none;
-          background: none;
+          background: transparent;
           border: none;
           color: var(--text-pure-white);
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           cursor: pointer;
+        }
+
+        .mobile-editorial-drawer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: var(--bg-glass);
+          backdrop-filter: blur(20px);
+          z-index: 999;
+          display: flex;
+          flex-direction: column;
+          padding: 100px 32px 32px 32px;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+        }
+
+        .mobile-editorial-drawer.open {
+          opacity: 1;
+          pointer-events: auto;
         }
 
         @media (max-width: 980px) {
-          .portix-mobile-toggle-btn {
+          .editorial-menu {
+            display: none;
+          }
+          .mobile-hamburger-btn {
             display: block;
           }
-        }
-
-        .portix-mobile-nav-drawer {
-          position: fixed;
-          top: 76px;
-          left: 0;
-          right: 0;
-          background: var(--bg-surface);
-          border-bottom: 1px solid var(--border-light);
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-          z-index: 999;
-          backdrop-filter: blur(20px);
+          .aswathi-editorial-nav {
+            padding: 16px 20px;
+          }
         }
       `}</style>
 
-      <div className="portix-nav-container">
-        <Link to="/" className="portix-brand-logo">
-          <img src={displayAvatar} alt={displayName} className="portix-brand-badge" />
+      <div className="editorial-nav-container">
+        <Link to="/" className="editorial-brand">
+          <span className="editorial-brand-mark">[ 01 ]</span>
           <span>{brandName}</span>
         </Link>
 
-        <nav className="portix-nav-menu">
-          <Link to="/" className={`portix-nav-link ${isActive("/") ? "active" : ""}`}>
-            Home
-          </Link>
-          <Link to="/projects" className={`portix-nav-link ${isActive("/projects") ? "active" : ""}`}>
-            Works
-          </Link>
-          <Link to="/about" className={`portix-nav-link ${isActive("/about") ? "active" : ""}`}>
-            About
-          </Link>
-          <Link to="/skills" className={`portix-nav-link ${isActive("/skills") ? "active" : ""}`}>
-            Skills
-          </Link>
-          <Link to="/experience" className={`portix-nav-link ${isActive("/experience") ? "active" : ""}`}>
-            Experience
-          </Link>
-          <Link to="/resume" className={`portix-nav-link ${isActive("/resume") ? "active" : ""}`}>
-            Resume
-          </Link>
+        <ul className="editorial-menu">
+          <li>
+            <Link to="/" className={`editorial-link ${isActive("/") ? "active" : ""}`}>
+              <span className="editorial-link-num">01.</span> Home
+            </Link>
+          </li>
+          <li>
+            <a
+              href="/#about"
+              onClick={(e) => scrollToSection(e, "about")}
+              className={`editorial-link ${isActive("/about") ? "active" : ""}`}
+            >
+              <span className="editorial-link-num">02.</span> About
+            </a>
+          </li>
+          <li>
+            <a
+              href="/#skills"
+              onClick={(e) => scrollToSection(e, "skills")}
+              className={`editorial-link ${isActive("/skills") ? "active" : ""}`}
+            >
+              <span className="editorial-link-num">03.</span> Skills
+            </a>
+          </li>
+          <li>
+            <a
+              href="/#projects"
+              onClick={(e) => scrollToSection(e, "projects")}
+              className={`editorial-link ${isActive("/projects") ? "active" : ""}`}
+            >
+              <span className="editorial-link-num">04.</span> Projects
+            </a>
+          </li>
+          <li>
+            <a
+              href="/#experience"
+              onClick={(e) => scrollToSection(e, "experience")}
+              className={`editorial-link ${isActive("/experience") ? "active" : ""}`}
+            >
+              <span className="editorial-link-num">05.</span> Experience
+            </a>
+          </li>
+          <li>
+            <a
+              href="/#contact"
+              onClick={(e) => scrollToSection(e, "contact")}
+              className={`editorial-link ${isActive("/contact") ? "active" : ""}`}
+            >
+              <span className="editorial-link-num">06.</span> Contact
+            </a>
+          </li>
+        </ul>
 
-          <Link to="/contact" className="portix-talk-btn">
-            <span className="portix-talk-arrow">→</span>
-            <span>Let's Talk</span>
-          </Link>
-
-          <Link to="/admin/login" className="portix-admin-pill" title="Admin Portal">
-            ⚙️ Admin
-          </Link>
-
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <button
+            className="theme-editorial-toggle"
             onClick={toggleTheme}
-            className="portix-theme-toggle"
-            title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
-            aria-label="Toggle Theme Mode"
+            aria-label="Toggle theme"
           >
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
-        </nav>
 
-        <button
-          className="portix-mobile-toggle-btn"
-          onClick={() => setMobileNavOpen(!mobileNavOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileNavOpen ? "✕" : "☰"}
-        </button>
+          <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="btn-editorial-primary" style={{ padding: "8px 20px", fontSize: "0.78rem" }}>
+            Contact ✉
+          </a>
+
+          <button
+            className="mobile-hamburger-btn"
+            onClick={() => setMobileNavOpen(!mobileNavOpen)}
+            aria-label="Toggle navigation"
+          >
+            {mobileNavOpen ? "✕" : "☰"}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileNavOpen && (
-        <div className="portix-mobile-nav-drawer">
-          <Link to="/" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            Home
-          </Link>
-          <Link to="/projects" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            Works
-          </Link>
-          <Link to="/about" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            About
-          </Link>
-          <Link to="/skills" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            Skills
-          </Link>
-          <Link to="/experience" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            Experience
-          </Link>
-          <Link to="/resume" className="portix-nav-link" onClick={() => setMobileNavOpen(false)}>
-            Resume
-          </Link>
-          <Link to="/contact" className="portix-talk-btn" style={{ justifyContent: "center" }} onClick={() => setMobileNavOpen(false)}>
-            <span className="portix-talk-arrow">→</span>
-            <span>Let's Talk</span>
-          </Link>
-          <Link to="/admin/login" className="portix-admin-pill" style={{ textAlign: "center" }} onClick={() => setMobileNavOpen(false)}>
-            ⚙️ Admin Portal
-          </Link>
-        </div>
-      )}
+      <div className={`mobile-editorial-drawer ${mobileNavOpen ? "open" : ""}`}>
+        <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "28px" }}>
+          <li>
+            <Link to="/" onClick={() => setMobileNavOpen(false)} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              01. Home
+            </Link>
+          </li>
+          <li>
+            <a href="/#about" onClick={(e) => scrollToSection(e, "about")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              02. About
+            </a>
+          </li>
+          <li>
+            <a href="/#skills" onClick={(e) => scrollToSection(e, "skills")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              03. Skills
+            </a>
+          </li>
+          <li>
+            <a href="/#projects" onClick={(e) => scrollToSection(e, "projects")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              04. Projects
+            </a>
+          </li>
+          <li>
+            <a href="/#experience" onClick={(e) => scrollToSection(e, "experience")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              05. Experience
+            </a>
+          </li>
+          <li>
+            <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
+              06. Contact
+            </a>
+          </li>
+        </ul>
+      </div>
     </header>
   );
 };

@@ -6,15 +6,21 @@ import PublicFooter from "./PublicFooter";
 const Resume = () => {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const defaultResume = {
+    title: "Senior Frontend Engineer Resume",
+    file_name: "Aswathi_Senior_Frontend_Developer_Resume.pdf",
+    file_size: "237 KB",
+    file_path: "/images/resume.pdf",
+  };
 
   useEffect(() => {
     fetchActiveResume();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchActiveResume = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await apiClient.get("/api/resume");
       if (res.data && res.data.status && res.data.data) {
@@ -24,18 +30,23 @@ const Resume = () => {
       } else if (Array.isArray(res.data) && res.data.length > 0) {
         setResumeData(res.data[0]);
       } else {
-        setResumeData(null);
+        setResumeData(defaultResume);
       }
     } catch (err) {
-      console.error("Failed to load active resume:", err);
-      setError("Unable to load the resume document. Please try again later.");
+      console.error("Failed to load active resume from API, using fallback:", err);
+      setResumeData(defaultResume);
     } finally {
       setLoading(false);
     }
   };
 
+  const activeResume = resumeData || defaultResume;
+  const resumeUrl = activeResume.file_path.startsWith("http") || activeResume.file_path.startsWith("/")
+    ? getMediaUrl(activeResume.file_path)
+    : getMediaUrl(`/${activeResume.file_path}`);
+
   return (
-    <div className="portix-resume-page">
+    <div className="portix-resume-page bg-grid-pattern">
       <style>{`
         .portix-resume-page {
           min-height: 100vh;
@@ -57,32 +68,31 @@ const Resume = () => {
         }
 
         .resume-header-editorial-card {
-          background: var(--bg-surface);
+          background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          border-radius: 24px;
-          padding: 40px 48px;
+          border-radius: 20px;
+          padding: 36px 44px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
           gap: 24px;
           box-shadow: var(--shadow-sm);
-          margin-bottom: 40px;
+          margin-bottom: 36px;
         }
 
         @media (max-width: 768px) {
           .resume-header-editorial-card {
-            padding: 28px 20px;
+            padding: 24px 20px;
             flex-direction: column;
             align-items: flex-start;
           }
         }
 
         .resume-headline-h1 {
-          font-size: 2.2rem;
-          font-weight: 900;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
+          font-size: 2rem;
+          font-weight: 800;
+          font-family: var(--font-display);
           color: var(--text-pure-white);
           margin-bottom: 6px;
         }
@@ -92,8 +102,9 @@ const Resume = () => {
           align-items: center;
           gap: 14px;
           color: var(--text-muted);
-          font-size: 0.92rem;
-          font-weight: 700;
+          font-size: 0.9rem;
+          font-weight: 600;
+          font-family: var(--font-mono);
         }
 
         .resume-btn-actions {
@@ -102,53 +113,10 @@ const Resume = () => {
           flex-wrap: wrap;
         }
 
-        .btn-portix-download {
-          background: var(--accent-orange);
-          color: #ffffff;
-          font-weight: 800;
-          font-size: 0.88rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          padding: 14px 28px;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.25s ease;
-        }
-
-        .btn-portix-download:hover {
-          background: var(--accent-orange-hover);
-          transform: translateY(-2px);
-        }
-
-        .btn-portix-tab {
-          background: var(--bg-surface-elevated);
-          border: 1px solid var(--border-light);
-          color: var(--text-pure-white);
-          font-weight: 800;
-          font-size: 0.88rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          padding: 14px 28px;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-        }
-
-        .btn-portix-tab:hover {
-          border-color: var(--accent-orange);
-          background: rgba(249, 115, 22, 0.08);
-        }
-
         .pdf-viewer-editorial-box {
-          background: var(--bg-surface);
+          background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          border-radius: 24px;
+          border-radius: 20px;
           overflow: hidden;
           box-shadow: var(--shadow-lg);
           height: 820px;
@@ -163,7 +131,8 @@ const Resume = () => {
           display: flex;
           justify-content: space-between;
           font-size: 0.85rem;
-          font-weight: 800;
+          font-weight: 700;
+          font-family: var(--font-mono);
           letter-spacing: 0.06em;
           text-transform: uppercase;
           color: var(--text-pure-white);
@@ -177,41 +146,41 @@ const Resume = () => {
           <div style={{ textAlign: "center", padding: "80px 20px", color: "var(--text-muted)" }}>
             <h2>Loading Resume...</h2>
           </div>
-        ) : error || !resumeData ? (
-          <div style={{ textAlign: "center", padding: "80px 20px", color: "#ef4444" }}>
-            <h2>{error || "No active resume document currently uploaded."}</h2>
-          </div>
         ) : (
           <>
             <div className="resume-header-editorial-card">
               <div>
-                <h1 className="resume-headline-h1">{resumeData.title || "Curriculum Vitae"}</h1>
+                <span className="telemetry-tag" style={{ color: "var(--accent-purple)", marginBottom: "8px" }}>
+                  ✦ VERIFIED CV DOCUMENT
+                </span>
+                <h1 className="resume-headline-h1">{activeResume.title || "Curriculum Vitae"}</h1>
                 <div className="resume-metadata-strip">
-                  <span>📄 {resumeData.file_name || "Resume.pdf"}</span>
-                  {resumeData.file_size && <span>• {resumeData.file_size}</span>}
-                  <span style={{ color: "var(--accent-orange)" }}>• Verified Active</span>
+                  <span>📄 {activeResume.file_name || "Aswathi_Senior_Frontend_Developer_Resume.pdf"}</span>
+                  <span style={{ color: "var(--accent-cyan)" }}>• 4+ Years Experience Document</span>
                 </div>
               </div>
 
               <div className="resume-btn-actions">
                 <a
-                  href={getMediaUrl(resumeData.file_path)}
+                  href={resumeUrl}
                   download
-                  className="btn-portix-download"
+                  className="btn-editorial-primary"
                   target="_blank"
                   rel="noreferrer"
+                  style={{ padding: "12px 24px", fontSize: "0.85rem" }}
                 >
                   <span>Download CV</span>
                   <span>📥</span>
                 </a>
                 <a
-                  href={getMediaUrl(resumeData.file_path)}
+                  href={resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn-portix-tab"
+                  className="btn-editorial-outline"
+                  style={{ padding: "12px 24px", fontSize: "0.85rem" }}
                 >
                   <span>Open Tab</span>
-                  <span>↗️</span>
+                  <span>↗</span>
                 </a>
               </div>
             </div>
@@ -219,17 +188,17 @@ const Resume = () => {
             {/* EMBEDDED PDF VIEWER */}
             <div className="pdf-viewer-editorial-box">
               <div className="pdf-top-bar">
-                <span>📄 Interactive Document Viewer</span>
-                <span>{resumeData.file_name}</span>
+                <span>📄 Interactive PDF Viewer</span>
+                <span>{activeResume.file_name}</span>
               </div>
               <object
-                data={getMediaUrl(resumeData.file_path)}
+                data={resumeUrl}
                 type="application/pdf"
                 style={{ width: "100%", height: "100%", border: "none" }}
               >
                 <iframe
-                  src={getMediaUrl(resumeData.file_path)}
-                  title={resumeData.title}
+                  src={resumeUrl}
+                  title={activeResume.title}
                   style={{ width: "100%", height: "100%", border: "none" }}
                 >
                   <div style={{ padding: "60px 20px", textAlign: "center", color: "var(--text-pure-white)" }}>
@@ -238,12 +207,12 @@ const Resume = () => {
                       Click below to view or download the resume PDF file.
                     </p>
                     <a
-                      href={getMediaUrl(resumeData.file_path)}
+                      href={resumeUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="btn-portix-download"
+                      className="btn-editorial-primary"
                     >
-                      ↗️ Open Resume in New Tab
+                      ↗ Open Resume PDF
                     </a>
                   </div>
                 </iframe>

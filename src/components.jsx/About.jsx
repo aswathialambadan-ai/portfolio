@@ -1,315 +1,83 @@
-import React, { useState, useEffect } from "react";
-import apiClient, { getMediaUrl } from "../utils/apiClient";
+import React from "react";
+import { motion } from "framer-motion";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
 
 const About = () => {
-  const [aboutData, setAboutData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchAboutDetails();
-  }, []);
-
-  const fetchAboutDetails = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await apiClient.get("/api/about");
-      if (res.data) {
-        const d = res.data;
-        let aboutObj = d.data
-          ? Array.isArray(d.data)
-            ? d.data[0]
-            : d.data
-          : Array.isArray(d)
-          ? d[0]
-          : d;
-
-        if (aboutObj && aboutObj.highlights && typeof aboutObj.highlights === "string") {
-          try {
-            aboutObj.highlights = JSON.parse(aboutObj.highlights);
-          } catch {
-            aboutObj.highlights = aboutObj.highlights
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean);
-          }
-        }
-        setAboutData(aboutObj);
-      }
-    } catch (err) {
-      console.error("About API fetch error:", err);
-      setError("Failed to load about profile data.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const displayName = aboutData?.full_name || "Adila Farhana";
-  const displayTitle = aboutData?.professional_title || "Full-Stack Developer";
-  const displayAvatar = aboutData?.profile_image
-    ? getMediaUrl(aboutData.profile_image)
-    : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80";
-
   return (
-    <div className="portix-about-page">
-      <style>{`
-        .portix-about-page {
-          min-height: 100vh;
-          background: var(--bg-primary);
-          color: var(--text-light);
-          font-family: var(--font-main);
-        }
-
-        .portix-about-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 60px 40px;
-        }
-
-        @media (max-width: 768px) {
-          .portix-about-container {
-            padding: 32px 20px;
-          }
-        }
-
-        .about-hero-editorial {
-          display: flex;
-          align-items: center;
-          gap: 48px;
-          background: var(--bg-surface);
-          border: 1px solid var(--border-subtle);
-          border-radius: 28px;
-          padding: 48px;
-          margin-bottom: 48px;
-          box-shadow: var(--shadow-lg);
-        }
-
-        @media (max-width: 900px) {
-          .about-hero-editorial {
-            flex-direction: column;
-            text-align: center;
-            padding: 32px 20px;
-          }
-        }
-
-        .about-portrait-frame {
-          width: 240px;
-          height: 280px;
-          border-radius: 20px;
-          overflow: hidden;
-          flex-shrink: 0;
-          border: 1px solid var(--border-light);
-          position: relative;
-        }
-
-        .about-portrait-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .about-editorial-headline {
-          font-size: 2.8rem;
-          font-weight: 900;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
-          color: var(--text-pure-white);
-          margin-bottom: 8px;
-        }
-
-        .about-tagline {
-          font-size: 1.15rem;
-          color: var(--accent-orange);
-          font-weight: 800;
-          margin-bottom: 16px;
-        }
-
-        .about-intro-quote {
-          font-size: 1.05rem;
-          color: var(--text-muted);
-          line-height: 1.7;
-          font-style: italic;
-        }
-
-        .about-meta-chips {
-          display: flex;
-          gap: 12px;
-          flex-wrap: wrap;
-          margin-top: 24px;
-        }
-
-        .about-meta-pill {
-          background: var(--bg-surface-elevated);
-          border: 1px solid var(--border-subtle);
-          color: var(--text-pure-white);
-          padding: 8px 16px;
-          border-radius: 8px;
-          font-size: 0.88rem;
-          font-weight: 800;
-          letter-spacing: 0.04em;
-        }
-
-        .about-card-block {
-          background: var(--bg-surface);
-          border: 1px solid var(--border-subtle);
-          border-radius: 24px;
-          padding: 40px;
-          margin-bottom: 32px;
-          box-shadow: var(--shadow-sm);
-        }
-
-        .about-block-title {
-          font-size: 1.4rem;
-          font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          color: var(--text-pure-white);
-          margin-bottom: 16px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .about-block-desc {
-          font-size: 1.05rem;
-          color: var(--text-muted);
-          line-height: 1.8;
-        }
-
-        .highlights-chips-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 16px;
-          margin-top: 20px;
-        }
-
-        .highlight-chip-item {
-          background: var(--bg-surface-elevated);
-          border: 1px solid var(--border-subtle);
-          padding: 16px 20px;
-          border-radius: 12px;
-          color: var(--text-pure-white);
-          font-weight: 700;
-          font-size: 0.95rem;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          transition: border-color 0.2s ease;
-        }
-
-        .highlight-chip-item:hover {
-          border-color: var(--accent-orange);
-        }
-      `}</style>
-
+    <div className="aswathi-page-root bg-grid-pattern">
       <PublicNavbar />
 
-      <main className="portix-about-container">
-        {loading ? (
-          <div style={{ textAlign: "center", padding: "80px 20px", color: "var(--text-muted)" }}>
-            <h2>Loading About Information...</h2>
-          </div>
-        ) : error ? (
-          <div style={{ textAlign: "center", padding: "80px 20px", color: "#ef4444" }}>
-            <h2>{error}</h2>
-          </div>
-        ) : (
-          <>
-            {/* HERO ABOUT PROFILE */}
-            <div className="about-hero-editorial">
-              <div className="about-portrait-frame">
-                <img
-                  src={displayAvatar}
-                  alt={displayName}
-                  className="about-portrait-img"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80";
-                  }}
-                />
-              </div>
+      <main className="section-container">
+        <motion.div
+          className="section-header"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="telemetry-tag" style={{ color: "var(--accent-purple)" }}>{"// ENGINEERING PROFILE"}</span>
+          <h1 className="editorial-giant-title" style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", marginTop: "8px" }}>
+            ABOUT <span className="editorial-stroke-text">ASWATHI</span>
+          </h1>
+          <p className="section-subtitle">
+            Senior Frontend Engineer specializing in high-performance web applications, scalable React architectures, and enterprise design systems.
+          </p>
+        </motion.div>
 
-              <div style={{ flex: 1 }}>
-                <div style={{ color: "var(--accent-orange)", fontWeight: "800", fontSize: "0.82rem", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "6px" }}>
-                  ■ Personal Profile
-                </div>
-                <h1 className="about-editorial-headline">{displayName}</h1>
-                <div className="about-tagline">{displayTitle}</div>
+        <div className="about-split-layout">
+          <motion.div
+            className="glass-card about-bio-card"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="project-title" style={{ fontSize: "1.7rem", fontWeight: 800, marginBottom: "16px", color: "var(--text-pure-white)" }}>
+              Senior Frontend Engineer (4+ Years Experience)
+            </h2>
+            <p className="about-bio-text" style={{ color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "16px" }}>
+              With 4+ years of hands-on frontend engineering experience, I specialize in transforming complex design ideas into seamless, accessible, and ultra-responsive digital products. My core focus lies in crafting sleek user experiences using React 18, TypeScript, Material UI, and Tailwind CSS, backed by robust REST API integration.
+            </p>
+            <p className="about-bio-text" style={{ color: "var(--text-muted)", lineHeight: 1.8 }}>
+              I take pride in writing modular, readable, and performance-optimized code. From state management with Redux Toolkit / React Query to fluid micro-animations, every line is engineered for enterprise reliability.
+            </p>
 
-                {aboutData?.short_intro && (
-                  <p className="about-intro-quote">"{aboutData.short_intro}"</p>
-                )}
-
-                <div className="about-meta-chips">
-                  {aboutData?.location && (
-                    <div className="about-meta-pill">📍 {aboutData.location}</div>
-                  )}
-                  {aboutData?.years_experience && (
-                    <div className="about-meta-pill">⏱️ {aboutData.years_experience} Experience</div>
-                  )}
-                  <div className="about-meta-pill" style={{ color: "var(--accent-orange)", borderColor: "var(--accent-orange)" }}>
-                    🟢 Open for Opportunities
-                  </div>
-                </div>
+            <div style={{ marginTop: "32px" }}>
+              <span className="telemetry-tag" style={{ color: "var(--accent-cyan)", marginBottom: "12px" }}>
+                CORE ARCHITECTURAL PILLARS
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
+                <span className="tech-pill">✨ Modern UI/UX Architecture</span>
+                <span className="tech-pill">⚡ Web Vitals & Performance</span>
+                <span className="tech-pill">📦 Design Systems & Tokens</span>
+                <span className="tech-pill">🌐 Type-Safe React & TS</span>
               </div>
             </div>
+          </motion.div>
 
-            {/* DETAILED BIO STORY */}
-            {aboutData?.description && (
-              <div className="about-card-block">
-                <h2 className="about-block-title">
-                  <span style={{ color: "var(--accent-orange)" }}>■</span>
-                  <span>My Story & Professional Philosophy</span>
-                </h2>
-                <p className="about-block-desc">{aboutData.description}</p>
-              </div>
-            )}
-
-            {/* CAREER & EDUCATION SUMMARIES */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "24px", marginBottom: "32px" }}>
-              {aboutData?.career_summary && (
-                <div className="about-card-block" style={{ margin: 0 }}>
-                  <h3 className="about-block-title">
-                    <span style={{ color: "var(--accent-orange)" }}>■</span>
-                    <span>Career Summary</span>
-                  </h3>
-                  <p className="about-block-desc">{aboutData.career_summary}</p>
-                </div>
-              )}
-
-              {aboutData?.education_summary && (
-                <div className="about-card-block" style={{ margin: 0 }}>
-                  <h3 className="about-block-title">
-                    <span style={{ color: "var(--accent-orange)" }}>■</span>
-                    <span>Academic Summary</span>
-                  </h3>
-                  <p className="about-block-desc">{aboutData.education_summary}</p>
-                </div>
-              )}
+          <motion.div
+            className="stats-grid"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="glass-card stat-card">
+              <div style={{ fontSize: "2.8rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-purple)" }}>4+</div>
+              <div style={{ color: "var(--text-pure-white)", fontWeight: 700 }}>Years Experience</div>
             </div>
-
-            {/* KEY HIGHLIGHTS */}
-            {aboutData?.highlights && Array.isArray(aboutData.highlights) && aboutData.highlights.length > 0 && (
-              <div className="about-card-block">
-                <h2 className="about-block-title">
-                  <span style={{ color: "var(--accent-orange)" }}>■</span>
-                  <span>Core Highlights & Capabilities</span>
-                </h2>
-                <div className="highlights-chips-grid">
-                  {aboutData.highlights.map((hl, idx) => (
-                    <div key={idx} className="highlight-chip-item">
-                      <span style={{ color: "var(--accent-orange)" }}>✔</span>
-                      <span>{hl}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        )}
+            <div className="glass-card stat-card">
+              <div style={{ fontSize: "2.8rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-cyan)" }}>30+</div>
+              <div style={{ color: "var(--text-pure-white)", fontWeight: 700 }}>Projects Delivered</div>
+            </div>
+            <div className="glass-card stat-card">
+              <div style={{ fontSize: "2.8rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--text-pure-white)" }}>99.9%</div>
+              <div style={{ color: "var(--text-pure-white)", fontWeight: 700 }}>Lighthouse Target</div>
+            </div>
+            <div className="glass-card stat-card">
+              <div style={{ fontSize: "2.8rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-orange)" }}>100%</div>
+              <div style={{ color: "var(--text-pure-white)", fontWeight: 700 }}>Type-Safe Code</div>
+            </div>
+          </motion.div>
+        </div>
       </main>
 
       <PublicFooter />
