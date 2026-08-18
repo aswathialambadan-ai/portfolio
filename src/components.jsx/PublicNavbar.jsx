@@ -23,6 +23,17 @@ const PublicNavbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileNavOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileNavOpen]);
+
   const fetchAboutInfo = async () => {
     try {
       const res = await apiClient.get("/api/about");
@@ -53,13 +64,13 @@ const PublicNavbar = () => {
   };
 
   const scrollToSection = (e, sectionId) => {
+    setMobileNavOpen(false);
     if (location.pathname === "/") {
       e.preventDefault();
       const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
       }
-      setMobileNavOpen(false);
     }
   };
 
@@ -176,20 +187,24 @@ const PublicNavbar = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: var(--bg-glass);
-          backdrop-filter: blur(20px);
-          z-index: 999;
+          width: 100vw;
+          height: 100vh;
+          background: var(--bg-primary);
+          z-index: 999999;
           display: flex;
           flex-direction: column;
-          padding: 100px 32px 32px 32px;
+          padding: 24px 20px 36px 20px;
           opacity: 0;
           pointer-events: none;
-          transition: opacity 0.3s ease;
+          transform: translateY(-100%);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+          overflow-y: auto;
         }
 
         .mobile-editorial-drawer.open {
           opacity: 1;
           pointer-events: auto;
+          transform: translateY(0);
         }
 
         @media (max-width: 980px) {
