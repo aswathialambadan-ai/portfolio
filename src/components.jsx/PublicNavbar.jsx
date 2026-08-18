@@ -197,10 +197,27 @@ const PublicNavbar = () => {
             display: none;
           }
           .mobile-hamburger-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.05);
           }
           .aswathi-editorial-nav {
-            padding: 16px 20px;
+            padding: 14px 18px;
+          }
+        }
+
+        @media (max-width: 520px) {
+          .nav-contact-btn {
+            display: none !important;
+          }
+          .editorial-brand {
+            font-size: 1.15rem;
+            gap: 8px;
           }
         }
       `}</style>
@@ -264,7 +281,7 @@ const PublicNavbar = () => {
           </li>
         </ul>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <button
             className="theme-editorial-toggle"
             onClick={toggleTheme}
@@ -273,7 +290,7 @@ const PublicNavbar = () => {
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
 
-          <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="btn-editorial-primary" style={{ padding: "8px 20px", fontSize: "0.78rem" }}>
+          <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="btn-editorial-primary nav-contact-btn" style={{ padding: "8px 18px", fontSize: "0.78rem" }}>
             Contact ✉
           </a>
 
@@ -288,38 +305,64 @@ const PublicNavbar = () => {
       </div>
 
       <div className={`mobile-editorial-drawer ${mobileNavOpen ? "open" : ""}`}>
-        <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "28px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+          <Link to="/" onClick={() => setMobileNavOpen(false)} className="editorial-brand">
+            <span className="editorial-brand-mark">[ 01 ]</span>
+            <span>{brandName}</span>
+          </Link>
+
+          <button
+            onClick={() => setMobileNavOpen(false)}
+            style={{ background: "none", border: "none", color: "var(--text-pure-white)", fontSize: "1.8rem", cursor: "pointer", padding: "4px 8px" }}
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
+        </div>
+
+        <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "24px" }}>
           <li>
-            <Link to="/" onClick={() => setMobileNavOpen(false)} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              01. Home
+            <Link to="/" onClick={() => setMobileNavOpen(false)} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">01.</span> Home
             </Link>
           </li>
           <li>
-            <a href="/#about" onClick={(e) => scrollToSection(e, "about")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              02. About
+            <a href="/#about" onClick={(e) => scrollToSection(e, "about")} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">02.</span> About
             </a>
           </li>
           <li>
-            <a href="/#skills" onClick={(e) => scrollToSection(e, "skills")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              03. Skills
+            <a href="/#skills" onClick={(e) => scrollToSection(e, "skills")} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">03.</span> Skills
             </a>
           </li>
           <li>
-            <a href="/#projects" onClick={(e) => scrollToSection(e, "projects")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              04. Projects
+            <a href="/#projects" onClick={(e) => scrollToSection(e, "projects")} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">04.</span> Projects
             </a>
           </li>
           <li>
-            <a href="/#experience" onClick={(e) => scrollToSection(e, "experience")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              05. Experience
+            <a href="/#experience" onClick={(e) => scrollToSection(e, "experience")} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">05.</span> Experience
             </a>
           </li>
           <li>
-            <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="editorial-link" style={{ fontSize: "1.3rem" }}>
-              06. Contact
+            <a href="/#contact" onClick={(e) => scrollToSection(e, "contact")} className="editorial-link" style={{ fontSize: "1.25rem", padding: "8px 0" }}>
+              <span className="editorial-link-num">06.</span> Contact
             </a>
           </li>
         </ul>
+
+        <div style={{ marginTop: "auto", paddingTop: "32px", borderTop: "1px solid var(--border-subtle)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "0.82rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>THEME PREFERENCE</span>
+          <button
+            className="theme-editorial-toggle"
+            onClick={toggleTheme}
+            style={{ width: "auto", padding: "8px 16px", gap: "8px", borderRadius: "8px" }}
+          >
+            {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          </button>
+        </div>
       </div>
     </header>
   );

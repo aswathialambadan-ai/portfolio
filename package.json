@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ajv": "^8.20.0",
+    "ajv-keywords": "^5.1.0",
     "axios": "^1.13.6",
     "framer-motion": "^12.38.0",
     "html2canvas": "^1.4.1",

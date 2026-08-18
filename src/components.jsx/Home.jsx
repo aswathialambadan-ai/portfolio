@@ -280,8 +280,44 @@ const Home = () => {
 
         @media (max-width: 768px) {
           .experimental-hero-wrapper {
-            padding: 32px 20px 60px 20px;
+            padding: 24px 16px 50px 16px;
             min-height: auto;
+          }
+          .hero-telemetry-bar {
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            gap: 10px;
+          }
+          .hero-portrait-frame {
+            max-width: 100%;
+          }
+          .portrait-img-wrapper {
+            height: 350px;
+          }
+          .stats-telemetry-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 32px;
+          }
+          .telemetry-stat-card {
+            padding: 18px 14px;
+          }
+          .hero-bottom-actions {
+            margin-top: 32px;
+            padding-top: 20px;
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .action-button-group {
+            width: 100%;
+            flex-direction: column;
+            gap: 12px;
+          }
+          .action-button-group .btn-editorial-primary,
+          .action-button-group .btn-editorial-outline {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 20px;
           }
         }
 
