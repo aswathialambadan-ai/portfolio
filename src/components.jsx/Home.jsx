@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import apiClient, { getMediaUrl } from "../utils/apiClient";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
-import profileImage from "../images/profile.png";
+import profileImage from "../images/aswathi.jpeg";
 
 const Home = () => {
   const [about, setAbout] = useState(null);
@@ -349,61 +349,60 @@ const Home = () => {
         .hero-portrait-frame {
           position: relative;
           width: 100%;
-          max-width: 440px;
+          max-width: 420px;
           margin: 0 auto;
           border-radius: 20px;
           background: var(--bg-card);
           border: 1px solid var(--border-light);
           box-shadow: var(--shadow-lg);
           padding: 16px;
-          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
           transition: all 0.35s ease;
         }
 
         .hero-portrait-frame:hover {
           border-color: var(--accent-purple);
-          box-shadow: 0 25px 60px -10px rgba(79, 70, 229, 0.2);
+          box-shadow: 0 25px 60px -10px rgba(79, 70, 229, 0.25);
           transform: translateY(-4px);
         }
 
         .portrait-img-wrapper {
           position: relative;
           width: 100%;
-          height: 420px;
-          border-radius: 12px;
+          height: 440px;
+          border-radius: 14px;
           overflow: hidden;
-          background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+          background: radial-gradient(circle at center, rgba(124, 58, 237, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--border-subtle);
         }
 
-        [data-theme="dark"] .portrait-img-wrapper {
-          background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+        [data-theme="light"] .portrait-img-wrapper {
+          background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
         }
 
         .portrait-img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           object-position: center top;
+          transition: transform 0.4s ease;
+          padding: 8px 4px 0 4px;
         }
 
-        .portrait-badge-overlay {
-          position: absolute;
-          bottom: 16px;
-          left: 16px;
-          right: 16px;
-          background: rgba(15, 23, 42, 0.88);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 10px;
+        .hero-portrait-frame:hover .portrait-img {
+          transform: scale(1.02);
+        }
+
+        .portrait-badge-below {
+          background: var(--bg-surface-elevated);
+          border: 1px solid var(--border-subtle);
+          border-radius: 12px;
           padding: 14px 18px;
-          color: #ffffff;
-        }
-
-        [data-theme="light"] .portrait-badge-overlay {
-          background: rgba(255, 255, 255, 0.94);
-          border: 1px solid rgba(15, 23, 42, 0.12);
-          color: #0f172a;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
 
         .hero-bottom-actions {
@@ -840,17 +839,17 @@ const Home = () => {
               <div className="hero-portrait-frame">
                 <div className="portrait-img-wrapper">
                   <img src={profileImage} alt="Aswathi - Senior Frontend Engineer" className="portrait-img" />
-                  <div className="portrait-badge-overlay">
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <span style={{ fontWeight: 800, fontSize: "1.05rem", fontFamily: "var(--font-display)" }}>ASWATHI</span>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent-purple)", fontWeight: 700 }}>
-                        4+ YRS EXP
-                      </span>
-                    </div>
-                    <p style={{ fontSize: "0.82rem", opacity: 0.85, margin: 0 }}>
-                      Senior Frontend Developer • React & TypeScript Architect
-                    </p>
+                </div>
+                <div className="portrait-badge-below">
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span style={{ fontWeight: 800, fontSize: "1.05rem", fontFamily: "var(--font-display)", color: "var(--text-pure-white)" }}>ASWATHI</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent-purple)", fontWeight: 700 }}>
+                      4+ YRS EXP
+                    </span>
                   </div>
+                  <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", margin: 0 }}>
+                    Senior Frontend Developer • React & TypeScript Architect
+                  </p>
                 </div>
               </div>
             </motion.div>
