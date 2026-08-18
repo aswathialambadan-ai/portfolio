@@ -319,70 +319,127 @@ const Home = () => {
         .hero-exp-badge {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          padding: 6px 16px;
-          border-radius: 20px;
-          background: rgba(79, 70, 229, 0.1);
-          border: 1px solid rgba(79, 70, 229, 0.25);
-          color: var(--accent-purple);
+          gap: 10px;
+          padding: 8px 18px;
+          border-radius: 30px;
+          background: rgba(124, 58, 237, 0.12);
+          border: 1px solid rgba(168, 85, 247, 0.35);
+          color: var(--accent-violet);
           font-family: var(--font-mono);
           font-size: 0.82rem;
           font-weight: 700;
-          letter-spacing: 0.1em;
-          margin-bottom: 20px;
+          letter-spacing: 0.12em;
+          margin-bottom: 24px;
+          box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+          backdrop-filter: blur(8px);
         }
 
-        .hero-role-morph {
+        .hero-terminal-box {
           font-family: var(--font-mono);
-          font-size: 1rem;
+          font-size: 0.98rem;
           font-weight: 700;
           color: var(--accent-cyan);
-          letter-spacing: 0.12em;
-          height: 32px;
-          margin-top: 12px;
+          letter-spacing: 0.1em;
+          padding: 8px 16px;
+          border-radius: 8px;
+          background: rgba(6, 182, 212, 0.07);
+          border: 1px solid rgba(6, 182, 212, 0.25);
+          margin-top: 16px;
           margin-bottom: 24px;
-          display: flex;
+          display: inline-flex;
           align-items: center;
+          gap: 10px;
+          box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.05);
+          max-width: fit-content;
+        }
+
+        .terminal-prompt {
+          color: var(--accent-purple);
+          font-weight: 800;
+        }
+
+        .terminal-cursor {
+          display: inline-block;
+          width: 8px;
+          height: 16px;
+          background-color: var(--accent-cyan);
+          margin-left: 2px;
+          animation: terminalBlink 1s infinite;
         }
 
         /* Non-Circular Professional Portrait Card */
         .hero-portrait-frame {
           position: relative;
           width: 100%;
-          max-width: 420px;
+          max-width: 430px;
           margin: 0 auto;
-          border-radius: 20px;
-          background: var(--bg-card);
-          border: 1px solid var(--border-light);
-          box-shadow: var(--shadow-lg);
-          padding: 16px;
+          border-radius: 24px;
+          background: rgba(12, 16, 25, 0.88);
+          border: 1px solid rgba(168, 85, 247, 0.35);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(124, 58, 237, 0.2);
+          padding: 18px;
           display: flex;
           flex-direction: column;
-          gap: 14px;
-          transition: all 0.35s ease;
+          gap: 16px;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(12px);
         }
 
         .hero-portrait-frame:hover {
-          border-color: var(--accent-purple);
-          box-shadow: 0 25px 60px -10px rgba(79, 70, 229, 0.25);
-          transform: translateY(-4px);
+          border-color: var(--accent-cyan);
+          box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 45px rgba(6, 182, 212, 0.35);
+          transform: translateY(-6px);
+        }
+
+        .portrait-floating-tag {
+          position: absolute;
+          top: 30px;
+          right: 30px;
+          z-index: 10;
+          background: rgba(7, 9, 14, 0.88);
+          border: 1px solid rgba(6, 182, 212, 0.4);
+          backdrop-filter: blur(10px);
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--text-pure-white);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
         }
 
         .portrait-img-wrapper {
           position: relative;
           width: 100%;
           height: 440px;
-          border-radius: 14px;
+          border-radius: 16px;
           overflow: hidden;
-          background: radial-gradient(circle at center, rgba(124, 58, 237, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%);
+          background: radial-gradient(circle at center, rgba(124, 58, 237, 0.12) 0%, rgba(12, 16, 25, 0.98) 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           border: 1px solid var(--border-subtle);
         }
 
+        .portrait-bottom-gradient {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 100px;
+          background: linear-gradient(to top, rgba(12, 16, 25, 0.98) 0%, transparent 100%);
+          pointer-events: none;
+        }
+
         [data-theme="light"] .portrait-img-wrapper {
           background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+        }
+
+        [data-theme="light"] .portrait-bottom-gradient {
+          background: linear-gradient(to top, #ffffff 0%, transparent 100%);
         }
 
         .portrait-img {
@@ -395,14 +452,14 @@ const Home = () => {
         }
 
         .hero-portrait-frame:hover .portrait-img {
-          transform: scale(1.02);
+          transform: scale(1.03);
         }
 
         .portrait-badge-below {
           background: var(--bg-surface-elevated);
           border: 1px solid var(--border-subtle);
-          border-radius: 12px;
-          padding: 14px 18px;
+          border-radius: 14px;
+          padding: 16px 20px;
         }
 
         .hero-bottom-actions {
@@ -461,17 +518,59 @@ const Home = () => {
         }
 
         .telemetry-stat-card {
-          background: var(--bg-card);
+          background: rgba(12, 16, 25, 0.85);
           border: 1px solid var(--border-subtle);
-          border-radius: 12px;
-          padding: 24px 20px;
+          border-radius: 16px;
+          padding: 24px 22px;
           position: relative;
-          transition: all 0.3s ease;
+          transition: all 0.35s ease;
+          overflow: hidden;
+          backdrop-filter: blur(10px);
+        }
+
+        .telemetry-stat-card::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-cyan), transparent);
+          opacity: 0.6;
+          transition: opacity 0.3s ease;
         }
 
         .telemetry-stat-card:hover {
           border-color: var(--border-glow);
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(124, 58, 237, 0.15);
+        }
+
+        .telemetry-stat-card:hover::before {
+          opacity: 1;
+        }
+
+        .hero-tech-pill {
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          font-weight: 600;
+          padding: 6px 14px;
+          border-radius: 6px;
+          background: rgba(124, 58, 237, 0.08);
+          border: 1px solid rgba(124, 58, 237, 0.22);
+          color: var(--accent-violet);
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.25s ease;
+        }
+
+        .hero-tech-pill:hover {
+          background: rgba(124, 58, 237, 0.18);
+          border-color: var(--accent-violet);
+          color: #ffffff;
           transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
         }
 
         /* SECTIONS GENERAL */
@@ -759,6 +858,10 @@ const Home = () => {
             1. HERO SECTION (Experienced, Confident & Technical)
             ========================================================================= */}
         <section id="hero" className="experimental-hero-wrapper">
+          {/* Glowing Ambient Background Mesh Orbs */}
+          <div className="hero-ambient-glow-purple"></div>
+          <div className="hero-ambient-glow-cyan"></div>
+
           {/* Telemetry Status Header Bar */}
           <div className="hero-telemetry-bar">
             <div className="telemetry-tag">
@@ -766,10 +869,10 @@ const Home = () => {
               <span>SENIOR FRONTEND PORTFOLIO // 2026</span>
             </div>
             <div className="telemetry-tag" style={{ display: window.innerWidth < 640 ? "none" : "flex" }}>
-              <span>LOCATION: HYBRID / REMOTE</span>
+              <span style={{ color: "var(--accent-violet)" }}>[ ARCHITECT & UI ENGINEER ]</span>
             </div>
             <div className="telemetry-tag">
-              <span style={{ color: "var(--accent-cyan)" }}>[ OPEN FOR SENIOR ROLES & CONSULTING ]</span>
+              <span style={{ color: "var(--accent-cyan)", fontWeight: 700 }}>● OPEN FOR SENIOR ROLES & CONSULTING</span>
             </div>
           </div>
 
@@ -786,68 +889,83 @@ const Home = () => {
               </div>
 
               {/* Main Display Typography */}
-              <h1 className="editorial-giant-title">
-                {displayName}
+              <h1 className="hero-display-title">
+                <span className="hero-title-primary">{displayName}</span>
                 <br />
-                <span className="editorial-stroke-text">FRONTEND</span>
+                <span className="hero-title-secondary">FRONTEND</span>
               </h1>
 
-              {/* Dynamic Text Morphing Role */}
-              <div className="hero-role-morph">
+              {/* Interactive Cyber Terminal Role Box */}
+              <div className="hero-terminal-box">
+                <span className="terminal-prompt">&gt;_</span>
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={roleIndex}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.3 }}
                   >
-                    &gt; {rolesList[roleIndex]}
+                    {rolesList[roleIndex]}
                   </motion.span>
                 </AnimatePresence>
+                <span className="terminal-cursor"></span>
               </div>
 
-              {/* High Confidence positioning paragraph */}
+              {/* Positioning paragraph */}
               <p
                 style={{
                   fontSize: "1.12rem",
                   color: "var(--text-muted)",
                   lineHeight: "1.75",
                   maxWidth: "580px",
-                  marginTop: "16px",
+                  marginTop: "8px",
                 }}
               >
                 {displayIntro}
               </p>
 
-              {/* Quick Action Badges */}
+              {/* Quick Action Tech Pills */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "24px" }}>
-                <span className="tech-pill">React 18</span>
-                <span className="tech-pill">TypeScript</span>
-                <span className="tech-pill">Tailwind CSS</span>
-                <span className="tech-pill">Redux Toolkit</span>
-                <span className="tech-pill">REST & GraphQL</span>
+                <span className="hero-tech-pill">React 18</span>
+                <span className="hero-tech-pill">TypeScript</span>
+                <span className="hero-tech-pill">Tailwind CSS</span>
+                <span className="hero-tech-pill">Redux Toolkit</span>
+                <span className="hero-tech-pill">REST & GraphQL</span>
               </div>
             </motion.div>
 
-            {/* Non-Circular Professional Portrait Card */}
+            {/* Futuristic Professional Portrait Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <div className="hero-portrait-frame">
+                {/* Cyber Corner Markers */}
+                <div className="cyber-corner cyber-corner-tl"></div>
+                <div className="cyber-corner cyber-corner-tr"></div>
+                <div className="cyber-corner cyber-corner-bl"></div>
+                <div className="cyber-corner cyber-corner-br"></div>
+
+                {/* Floating Status Badge */}
+                <div className="portrait-floating-tag">
+                  <span className="telemetry-dot"></span>
+                  <span>Senior Architect</span>
+                </div>
+
                 <div className="portrait-img-wrapper">
                   <img src={profileImage} alt="Aswathi - Senior Frontend Engineer" className="portrait-img" />
+                  <div className="portrait-bottom-gradient"></div>
                 </div>
                 <div className="portrait-badge-below">
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                    <span style={{ fontWeight: 800, fontSize: "1.05rem", fontFamily: "var(--font-display)", color: "var(--text-pure-white)" }}>ASWATHI</span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent-purple)", fontWeight: 700 }}>
+                    <span style={{ fontWeight: 800, fontSize: "1.08rem", fontFamily: "var(--font-display)", color: "var(--text-pure-white)", letterSpacing: "0.04em" }}>ASWATHI</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent-cyan)", fontWeight: 700, padding: "2px 8px", background: "rgba(6, 182, 212, 0.12)", border: "1px solid rgba(6, 182, 212, 0.3)", borderRadius: "4px" }}>
                       4+ YRS EXP
                     </span>
                   </div>
-                  <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", margin: 0 }}>
+                  <p style={{ fontSize: "0.84rem", color: "var(--text-muted)", margin: 0, fontFamily: "var(--font-main)" }}>
                     Senior Frontend Developer • React & TypeScript Architect
                   </p>
                 </div>
@@ -858,7 +976,7 @@ const Home = () => {
           {/* Telemetry Stats Grid Row */}
           <div className="stats-telemetry-row">
             <div className="telemetry-stat-card">
-              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-purple)" }}>4+</div>
+              <div style={{ fontSize: "2.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "var(--accent-violet)" }}>4+</div>
               <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-pure-white)" }}>Years Experience</div>
               <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Specialized in Frontend & React</div>
             </div>

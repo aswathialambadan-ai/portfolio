@@ -142,7 +142,74 @@ body {
   opacity: 0.015;
 }
 
-/* Editorial Oversized Display Typography */
+/* Keyframe Animations for Cyber Atmosphere */
+@keyframes floatGlowOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(30px, -25px) scale(1.12);
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulseGlowOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-25px, 20px) scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+@keyframes terminalBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(6, 182, 212, 0);
+  }
+}
+
+/* Ambient Glow Orbs */
+.hero-ambient-glow-purple {
+  position: absolute;
+  top: -10%;
+  left: -5%;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.22) 0%, rgba(124, 58, 237, 0.05) 50%, transparent 75%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
+  animation: floatGlowOrb 12s ease-in-out infinite;
+}
+
+.hero-ambient-glow-cyan {
+  position: absolute;
+  bottom: 5%;
+  right: -5%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, rgba(6, 182, 212, 0.04) 50%, transparent 75%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulseGlowOrb 14s ease-in-out infinite;
+}
+
+/* Hero Display Typography - Electric Cyber Glow & Hollow Neon Stroke */
+.hero-display-title,
 .editorial-giant-title {
   font-family: var(--font-display);
   font-size: clamp(3.8rem, 9.5vw, 9.2rem);
@@ -150,26 +217,52 @@ body {
   letter-spacing: -0.04em;
   line-height: 0.92;
   text-transform: uppercase;
-  color: var(--text-pure-white);
+  margin-bottom: 8px;
 }
 
+.hero-title-primary {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 35%, #c084fc 70%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 35px rgba(168, 85, 247, 0.45));
+}
+
+[data-theme="light"] .hero-title-primary {
+  background: linear-gradient(135deg, #0f172a 0%, #3b82f6 50%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: none;
+}
+
+.hero-title-secondary,
 .editorial-stroke-text {
+  display: inline-block;
   color: transparent !important;
-  -webkit-text-stroke: 1.8px var(--outline-stroke);
-  transition: all 0.3s ease;
+  -webkit-text-fill-color: transparent !important;
+  -webkit-text-stroke: 2.2px var(--accent-cyan);
+  filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.65));
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 4px;
 }
 
+.hero-title-secondary:hover,
 .editorial-stroke-text:hover {
-  -webkit-text-stroke: 1.8px var(--accent-violet);
+  -webkit-text-stroke: 2.2px var(--accent-violet);
+  filter: drop-shadow(0 0 35px rgba(168, 85, 247, 0.85));
+  transform: translateX(8px);
 }
 
+[data-theme="light"] .hero-title-secondary,
 [data-theme="light"] .editorial-stroke-text {
-  -webkit-text-stroke: 2px #4c1d95;
+  -webkit-text-stroke: 2.5px #4f46e5;
+  filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.2));
 }
 
+[data-theme="light"] .hero-title-secondary:hover,
 [data-theme="light"] .editorial-stroke-text:hover {
-  -webkit-text-stroke: 2px #7c3aed;
-  color: rgba(124, 58, 237, 0.08) !important;
+  -webkit-text-stroke: 2.5px #0891b2;
+  color: rgba(8, 145, 178, 0.08) !important;
 }
 
 /* Telemetry Metadata Labels */
@@ -190,14 +283,52 @@ body {
 }
 
 .telemetry-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background-color: var(--accent-violet);
-  box-shadow: 0 0 8px var(--accent-violet);
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
+  animation: statusPulse 2s infinite;
 }
 
-/* Crosshair Markers */
+/* Crosshair Cyber Corners */
+.cyber-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgba(6, 182, 212, 0.6);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.cyber-corner-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid rgba(6, 182, 212, 0.7);
+  border-left: 2px solid rgba(6, 182, 212, 0.7);
+}
+
+.cyber-corner-tr {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid rgba(6, 182, 212, 0.7);
+  border-right: 2px solid rgba(6, 182, 212, 0.7);
+}
+
+.cyber-corner-bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid rgba(6, 182, 212, 0.7);
+  border-left: 2px solid rgba(6, 182, 212, 0.7);
+}
+
+.cyber-corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid rgba(6, 182, 212, 0.7);
+  border-right: 2px solid rgba(6, 182, 212, 0.7);
+}
+
 .crosshair-corner {
   position: absolute;
   font-family: var(--font-mono);
@@ -213,12 +344,12 @@ body {
 /* Kinetic Editorial Buttons */
 .btn-editorial-primary {
   padding: 16px 36px;
-  border-radius: 4px;
-  background: var(--text-pure-white);
+  border-radius: 6px;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
   color: var(--text-dark);
   font-family: var(--font-mono);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
@@ -226,16 +357,17 @@ body {
   align-items: center;
   gap: 12px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid var(--text-pure-white);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .btn-editorial-primary:hover {
-  background: var(--accent-purple);
-  border-color: var(--accent-purple);
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-violet) 100%);
+  border-color: var(--accent-violet);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
 }
 
 [data-theme="light"] .btn-editorial-primary {
