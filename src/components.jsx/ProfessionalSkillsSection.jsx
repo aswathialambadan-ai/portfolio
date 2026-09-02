@@ -1,57 +1,143 @@
 import React from "react";
-import { professionalSkills } from "../data/portfolioData";
 
 const ProfessionalSkillsSection = () => {
+  const traits = [
+    {
+      icon: "🧠",
+      name: "Problem Solving",
+      desc: "Deconstructing complex frontend & state management issues into clean, modular, and reusable component solutions."
+    },
+    {
+      icon: "🔬",
+      name: "Analytical Thinking",
+      desc: "Evaluating architectural trade-offs in state management pipelines, data structures, and client-side rendering performance."
+    },
+    {
+      icon: "👁️",
+      name: "Attention to Detail",
+      desc: "Ensuring pixel-perfect UI implementation, smooth micro-animations, WCAG accessibility, and robust edge-case handling."
+    },
+    {
+      icon: "🤝",
+      name: "Team Collaboration",
+      desc: "Partnering seamlessly with backend engineers (PHP/Python), UI/UX designers, and product owners in Agile environments."
+    },
+    {
+      icon: "💬",
+      name: "Effective Communication",
+      desc: "Articulating complex technical concepts, API payload constraints, and engineering decisions with clarity."
+    },
+    {
+      icon: "⚡",
+      name: "Adaptability & Growth",
+      desc: "Continuously mastering emerging web standards, modern React ecosystem tools, Next.js, and AI-assisted workflows."
+    }
+  ];
+
   return (
-    <section className="traits-editorial" style={{ padding: "80px 0", background: "var(--bg-secondary)" }}>
+    <section id="mindset" className="mindset-section">
       <style>{`
-        .traits-editorial-grid {
+        .mindset-section {
+          padding: 80px 0 100px 0;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .mindset-heading-main {
+          font-family: var(--font-display);
+          font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+          font-weight: 800;
+          color: var(--text-bright);
+          line-height: 1.15;
+          margin-bottom: 36px;
+          letter-spacing: -0.02em;
+        }
+
+        .mindset-gradient-text {
+          background: linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-cyan) 60%, var(--accent-indigo) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .mindset-cards-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
+          gap: 20px;
         }
 
-        .trait-item-box {
-          background: var(--bg-card);
-          border: 1px solid var(--border-line);
-          border-radius: 4px;
+        .mindset-glass-card {
+          background: var(--bg-dark-card);
+          border: 1px solid var(--border-subtle);
+          border-radius: 18px;
           padding: 24px;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
         }
 
-        .trait-name-heading {
-          font-family: var(--font-serif);
-          font-size: 1.15rem;
-          font-weight: 700;
-          color: var(--text-main);
-          margin-bottom: 6px;
+        .mindset-glass-card:hover {
+          border-color: var(--accent-emerald);
+          transform: translateY(-4px);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 20px var(--accent-emerald-glow);
         }
 
-        .trait-desc-text {
+        .trait-card-top {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 14px;
+        }
+
+        .trait-icon-badge {
+          font-size: 1.3rem;
+          padding: 8px;
+          border-radius: 10px;
+          background: rgba(217, 119, 6, 0.12);
+          border: 1px solid var(--border-emerald);
+          line-height: 1;
+        }
+
+        .trait-card-title {
+          font-family: var(--font-display);
+          font-size: 1.12rem;
+          font-weight: 800;
+          color: var(--text-bright);
+        }
+
+        .trait-card-desc {
           font-size: 0.88rem;
-          color: var(--text-sub);
-          line-height: 1.55;
+          color: var(--text-muted);
+          line-height: 1.6;
         }
 
-        @media (max-width: 900px) {
-          .traits-editorial-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 1024px) {
+          .mindset-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
-        @media (max-width: 600px) {
-          .traits-editorial-grid { grid-template-columns: 1fr; }
+        @media (max-width: 640px) {
+          .mindset-cards-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
 
       <div className="container">
-        <div className="section-num">07 / Attributes</div>
-        <h2 className="section-heading">
-          Engineering <span style={{ fontStyle: "italic", fontWeight: "400", color: "var(--accent-terracotta)" }}>Mindset</span>
+        <div className="section-tag">✨ PROFESSIONAL TRAITS</div>
+
+        <h2 className="mindset-heading-main">
+          Engineering <span className="mindset-gradient-text">Mindset</span>
         </h2>
 
-        <div className="traits-editorial-grid">
-          {professionalSkills.map((trait) => (
-            <div key={trait.name} className="trait-item-box">
-              <h3 className="trait-name-heading">{trait.name}</h3>
-              <p className="trait-desc-text">{trait.desc}</p>
+        <div className="mindset-cards-grid">
+          {traits.map((t) => (
+            <div key={t.name} className="mindset-glass-card">
+              <div className="trait-card-top">
+                <span className="trait-icon-badge">{t.icon}</span>
+                <h3 className="trait-card-title">{t.name}</h3>
+              </div>
+
+              <p className="trait-card-desc">{t.desc}</p>
             </div>
           ))}
         </div>
